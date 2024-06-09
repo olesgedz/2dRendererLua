@@ -1,0 +1,5 @@
+* !text !filter !merge !diff
+*.ttf !text !filter !merge !diff
+*.png !text !filter !merge !diff
+*.wav !text !filter !merge !diff
+*.psd !text !filter !merge !diff
