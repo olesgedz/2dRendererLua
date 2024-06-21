@@ -1,0 +1,67 @@
+cmake_minimum_required(VERSION 3.28)
+
+set(Target ENGINE)
+
+project(${Target})
+
+set(CMAKE_CXX_STANDARD 20)
+
+file(GLOB_RECURSE source_files "src/*.cpp")
+file(GLOB_RECURSE header_files "src/*.h")
+
+find_package(imgui CONFIG REQUIRED)
+find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL2_image CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(Lua REQUIRED)
+find_package(SDL2_mixer CONFIG REQUIRED)
+find_package(SDL2_ttf CONFIG REQUIRED)
+find_package(sol2 CONFIG REQUIRED)
+
+
+# App
+add_executable(${Target} ${source_files})
+target_include_directories(${Target}
+        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
+        ${SDL2_INCLUDE_DIRS}
+        ${SDL2_IMAGE_INCLUDE_DIRS}
+        ${SDL2_TTF_INCLUDE_DIRS}
+        ${SDL2_MIXER_INCLUDE_DIRS}
+        )
+target_link_libraries(${Target} PRIVATE glm::glm)
+
+target_include_directories(${Target} PRIVATE ${LUA_INCLUDE_DIR})
+
+target_link_libraries(${Target} PRIVATE ${LUA_LIBRARIES})
+
+target_link_libraries(${Target}
+        PRIVATE imgui::imgui
+        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+        )
+target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
+target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
+target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
+target_link_libraries(${Target} PRIVATE sol2)
+## Tests
+#enable_testing()
+#
+#file(GLOB_RECURSE test_source_files "test/src/*.cpp")
+#file(GLOB_RECURSE test_header_files "test/src/*.h")
+#find_package(GTest CONFIG REQUIRED)
+#
+#add_executable(app_test ${test_source_files} ${test_header_files})
+#
+#target_link_libraries(
+#        app_test
+#        PRIVATE
+#        AppLib
+#        GTest::gtest_main
+#)
+#
+#target_include_directories(app_test
+#        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
+#)
+#
+#include(GoogleTest)
+#gtest_discover_tests(app_test)
