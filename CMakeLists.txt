@@ -18,8 +18,6 @@ find_package(SDL2_mixer CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 
-
-# App
 add_executable(${Target} ${source_files})
 target_include_directories(${Target}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
@@ -31,14 +29,14 @@ target_include_directories(${Target}
 target_link_libraries(${Target} PRIVATE glm::glm)
 
 target_include_directories(${Target} PRIVATE ${LUA_INCLUDE_DIR})
+target_include_directories(${Target} PRIVATE ${IMGUI_INCLUDE_DIRS})
 
 target_link_libraries(${Target} PRIVATE ${LUA_LIBRARIES})
 
-target_link_libraries(${Target}
-        PRIVATE imgui::imgui
-        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+target_link_libraries(${Target} PRIVATE
+         imgui::imgui
         )
+target_link_libraries(${Target} PRIVATE  SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
