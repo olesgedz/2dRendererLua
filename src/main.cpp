@@ -4,10 +4,10 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
 #include <glm/glm.hpp>
-#include <imgui/imgui.h>
+#include <imgui.h>
 #include <sol/sol.hpp>
 
-int main() {
+int main(int argc, char *args[]) {
     // Simply tries to use the Lua language with the Sol library
     sol::state lua;
     lua.open_libraries(sol::lib::base);
@@ -17,7 +17,7 @@ int main() {
     velocity = glm::normalize(velocity);
 
     // Tries to initialize SDL
-    SDL_Init(SDL_INIT_EVERYTHING);
+    // SDL_Init(SDL_INIT_EVERYTHING);
 
     std::cout << "Yay! Dependencies work correctly." << std::endl;
     return 0;
