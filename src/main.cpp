@@ -7,18 +7,14 @@
 #include <imgui.h>
 #include <sol/sol.hpp>
 
+#include "Game.h"
+
 int main(int argc, char *args[]) {
-    // Simply tries to use the Lua language with the Sol library
-    sol::state lua;
-    lua.open_libraries(sol::lib::base);
+    Game game;
 
-    // Tries to create a vector2 and normalize it with the GLM library
-    glm::vec2 velocity = glm::vec2(5.0, -2.5);
-    velocity = glm::normalize(velocity);
+    game.initialize();
+    game.run();
+    game.destroy();
 
-    // Tries to initialize SDL
-    // SDL_Init(SDL_INIT_EVERYTHING);
-
-    std::cout << "Yay! Dependencies work correctly." << std::endl;
     return 0;
 }
