@@ -12,6 +12,7 @@
 int main(int argc, char *args[]) {
     Game game;
 
+    std::cout << "Initializing game..." << std::endl;
     game.initialize();
     game.run();
     game.destroy();

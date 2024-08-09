@@ -8,6 +8,7 @@ Game::Game()
 
 void Game::initialize()
 {
+
 }
 
 void Game::run()
