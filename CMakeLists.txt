@@ -7,7 +7,8 @@ project(${Target})
 set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB_RECURSE source_files "src/*.cpp")
-file(GLOB_RECURSE header_files "src/*.h")
+file(GLOB_RECURSE header_files "src/*.hpp")
+file(GLOB_RECURSE module_files "src/*.ixx")
 
 find_package(imgui CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
@@ -18,7 +19,25 @@ find_package(SDL2_mixer CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
 
-add_executable(${Target} ${source_files})
+add_executable(${Target})
+
+target_sources(${Target}
+        PUBLIC
+        ${source_files}     # Regular source file
+        PUBLIC
+        FILE_SET modules TYPE CXX_MODULES
+#        BASE_DIRS src
+        FILES
+        ${module_files}     # Module files
+        PUBLIC
+        FILE_SET headers TYPE HEADERS
+#        BASE_DIRS include
+        FILES
+        ${header_files}     # Header files
+        )
+
+
+
 target_include_directories(${Target}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
         ${SDL2_INCLUDE_DIRS}
