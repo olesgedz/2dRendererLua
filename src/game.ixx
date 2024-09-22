@@ -90,8 +90,14 @@ void Game::processInput() {
 void Game::update() {}
 
 void Game::render() {
-  SDL_SetRenderDrawColor(_renderer, 255, 0, 0, 255);
+  SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
   SDL_RenderClear(_renderer);
+
+  // Draw a rectangle
+  SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
+  SDL_Rect player = {10, 10, 20, 20};
+  SDL_RenderFillRect(_renderer, &player);
+
 
   SDL_RenderPresent(_renderer);
 }
