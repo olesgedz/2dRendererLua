@@ -1,21 +1,22 @@
-#include <iostream>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-#include <glm/glm.hpp>
+#include <SDL2/SDL_ttf.h>
 #include <imgui.h>
+
+#include <glm/glm.hpp>
+#include <iostream>
 #include <sol/sol.hpp>
 
-#include "Game.h"
+import Game;
 
-int main(int argc, char *args[]) {
-    Game game;
+int main(int argc, char* args[]) {
+  Game game;
 
-    std::cout << "Initializing game..." << std::endl;
-    game.initialize();
-    game.run();
-    game.destroy();
+  std::cout << "Initializing game..." << std::endl;
+  game.initialize();
+  game.run();
+  game.destroy();
 
-    return 0;
+  return 0;
 }
