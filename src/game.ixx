@@ -1,9 +1,32 @@
-#include "Game.h"
+module;
 
 #include <SDL2/SDL.h>
+#include <SDL_video.h>
 #include <imgui.h>
-
 #include <iostream>
+
+export module Game;
+
+export class Game {
+public:
+  Game();
+
+  void initialize();
+  void run();
+  void processInput();
+  void setup();
+  void update();
+  void render();
+  void destroy();
+
+  int windowWidth;
+  int windowHeight;
+
+private:
+  SDL_Window* _window;
+  SDL_Renderer* _renderer;
+  bool isRunning;
+};
 
 Game::Game() {}
 
@@ -54,10 +77,10 @@ void Game::processInput() {
     switch (event.type) {
       case SDL_QUIT:
         isRunning = false;
-        break;
+      break;
       case SDL_KEYDOWN:
         if (event.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
-        break;
+      break;
       default:
         break;
     }
