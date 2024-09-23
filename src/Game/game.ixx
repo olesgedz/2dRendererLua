@@ -6,10 +6,10 @@ module;
 #include <glm/glm.hpp>
 #include <filesystem>
 #include <imgui.h>
-#include <iostream>
 
 export module Game;
 export import Logger;
+import ecs;
 
 export class Game {
 public:
@@ -24,8 +24,6 @@ public:
   void destroy();
 
 private:
-  glm::vec2 _playerPos;
-  glm::vec2 _playerVel;
 
   float _millisecondsPreviousFrame = 0.0f;
   float _deltaTime = 0.0f;
@@ -74,8 +72,6 @@ void Game::initialize() {
 }
 
 void Game::setup() {
-  _playerPos = glm::vec2(10.0f, 20.0f);
-  _playerVel = glm::vec2(10.0f, 5.0f);
 }
 
 void Game::run() {
@@ -112,35 +108,12 @@ void Game::update() {
 
   _millisecondsPreviousFrame = SDL_GetTicks();
 
-  _playerPos += _playerVel * _deltaTime;
 }
 
 void Game::render() {
   SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
   SDL_RenderClear(_renderer);
 
-  // Draw a Png texture
-  auto imagePath = (_assetsPath / "images/tank-tiger-right.png");
-  SDL_Surface* surface = IMG_Load(imagePath.string().c_str());
-
-  assert(surface != nullptr || !"Error loading image");
-
-  int width = surface->w;
-  int height = surface->h;
-
-  SDL_Texture* texture = SDL_CreateTextureFromSurface(_renderer, surface);
-  SDL_FreeSurface(surface);
-
-  SDL_Rect src = {0, 0, width, height};
-  SDL_Rect dst = {
-      static_cast<int>(_playerPos.x),
-      static_cast<int>(_playerPos.y),
-      32,
-      32
-  };
-
-  SDL_RenderCopy(_renderer, texture, &src, &dst);
-  SDL_DestroyTexture(texture);
   SDL_RenderPresent(_renderer);
 }
 
