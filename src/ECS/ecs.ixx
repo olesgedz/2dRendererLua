@@ -6,7 +6,7 @@ module;
 export module ecs;
 
 
-const unsigned int MAX_COMPONENTS = 32;
+constexpr unsigned int MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
 struct BaseComponent {
@@ -25,9 +25,21 @@ class Component : public BaseComponent {
 class Entity {
 public:
   Entity(int id) : _id(id) {
-  }
+  };
+
+  Entity(const Entity& other) = default;
+
+  Entity& operator=(const Entity& other) = default;
 
   int getId() const { return _id; }
+
+  bool operator==(const Entity& other) const {
+    return _id == other._id;
+  }
+
+  bool operator!=(const Entity& other) const {
+    return _id != other._id;
+  }
 
 private:
   int _id;
@@ -67,7 +79,7 @@ void System::addEntity(Entity entity) {
 
 void System::removeEntityFromSystem(Entity entity) {
   _entities.erase(std::remove_if(_entities.begin(), _entities.end(),
-                                 [&entity](Entity& other) { return other.getId() == entity.getId(); }),
+                                 [&entity](Entity& other) { return other == entity; }),
                   _entities.end());
 }
 
