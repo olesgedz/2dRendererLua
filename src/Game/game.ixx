@@ -9,6 +9,7 @@ module;
 #include <iostream>
 
 export module Game;
+export import Logger;
 
 export class Game {
 public:
@@ -22,11 +23,6 @@ public:
   void render();
   void destroy();
 
-  int windowWidth;
-  int windowHeight;
-  const int _fps = 60;
-  const int _millisecondsPerFrame = 1000 / _fps;
-
 private:
   glm::vec2 _playerPos;
   glm::vec2 _playerVel;
@@ -38,13 +34,19 @@ private:
   SDL_Renderer* _renderer;
   bool isRunning;
   std::filesystem::path _assetsPath = "../assets";
+
+  int windowWidth;
+  int windowHeight;
+  const int _fps = 60;
+  const int _millisecondsPerFrame = 1000 / _fps;
+  const bool _uncapFramerate = true;
 };
 
 Game::Game() {}
 
 void Game::initialize() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-    std::cerr << "Error initializing SDL" << std::endl;
+    Logger::err("Error initializing SDL");
     return;
   }
   SDL_DisplayMode displayMode;
@@ -57,13 +59,13 @@ void Game::initialize() {
                              SDL_WINDOW_BORDERLESS);
 
   if (!_window) {
-    std::cerr << "Error creating SDL window" << std::endl;
+    Logger::err("Error creating SDL window");
     return;
   }
 
   _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!_renderer) {
-    std::cerr << "Error creating SDL renderer" << std::endl;
+    Logger::err("Error creating SDL renderer");
     return;
   }
 
@@ -103,7 +105,7 @@ void Game::processInput() {
 }
 
 void Game::update() {
-  if (_millisecondsPreviousFrame + _millisecondsPerFrame > SDL_GetTicks()) {
+  if (!_uncapFramerate && (_millisecondsPreviousFrame + _millisecondsPerFrame > SDL_GetTicks())) {
     SDL_Delay(_millisecondsPreviousFrame + _millisecondsPerFrame - SDL_GetTicks());
   }
   _deltaTime = (SDL_GetTicks() - _millisecondsPreviousFrame) / 1000.0f;
