@@ -2,6 +2,8 @@ module;
 
 #include <bitset>
 #include <memory>
+#include <typeindex>
+#include <unordered_map>
 #include <vector>
 
 export module ecs;
@@ -111,4 +113,5 @@ private:
   std::vector<IPool *> _componentPools;
   // Vector of signatures, each signature represents the components an entity has
   std::vector<Signature> _entityComponentSignatures;
+  std::unordered_map<std::type_index, System *> _entityIdToIndex;
 };
