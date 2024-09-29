@@ -1,10 +1,12 @@
 module;
 
 #include <bitset>
+#include <memory>
 #include <vector>
 
 export module ecs;
 
+import pool;
 
 constexpr unsigned int MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
@@ -83,5 +85,30 @@ void System::removeEntityFromSystem(Entity entity) {
                   _entities.end());
 }
 
-class Registry {
+////////////////////////////////////////////////////////////////////////////////////////
+// Registry
+////////////////////////////////////////////////////////////////////////////////////////
+// The registry class is responsible for creating entities and managing the component pools.
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+export class Registry {
+
+public:
+  Registry () = default;
+
+  Entity createEntity();
+
+
+private:
+
+  // Keeps track number of the entities
+  int numEntities = 0;
+
+  // Vector of component pools, each pool stores a specific component type
+  // Vector index is the component id
+  // Pool index is the component id
+  std::vector<IPool *> _componentPools;
+  // Vector of signatures, each signature represents the components an entity has
+  std::vector<Signature> _entityComponentSignatures;
 };
