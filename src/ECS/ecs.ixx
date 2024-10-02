@@ -95,23 +95,22 @@ void System::removeEntityFromSystem(Entity entity) {
 
 
 export class Registry {
-
 public:
-  Registry () = default;
+  Registry() = default;
 
   Entity createEntity();
 
 
 private:
-
   // Keeps track number of the entities
   int numEntities = 0;
 
   // Vector of component pools, each pool stores a specific component type
   // Vector index is the component id
   // Pool index is the component id
-  std::vector<IPool *> _componentPools;
+  std::vector<IPool*> _componentPools;
   // Vector of signatures, each signature represents the components an entity has
+  // Vector index is the entity id
   std::vector<Signature> _entityComponentSignatures;
-  std::unordered_map<std::type_index, System *> _entityIdToIndex;
+  std::unordered_map<std::type_index, System*> _entityIdToIndex;
 };
