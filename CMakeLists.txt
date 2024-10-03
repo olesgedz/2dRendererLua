@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 
 set(Target ENGINE)
 
-#if(DEFINED ENV{VCPKG_ROOT})
-#        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-#endif()
+if(DEFINED ENV{VCPKG_ROOT})
+        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+endif()
 
 project(${Target})
 
@@ -14,7 +14,7 @@ file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.hpp")
 file(GLOB_RECURSE module_files "src/*.ixx")
 #
-#find_package(imgui CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -56,9 +56,9 @@ target_include_directories(${Target} PRIVATE ${IMGUI_INCLUDE_DIRS})
 
 target_link_libraries(${Target} PRIVATE ${LUA_LIBRARIES})
 
-#target_link_libraries(${Target} PRIVATE
-#         imgui::imgui
-#        )
+target_link_libraries(${Target} PRIVATE
+         imgui::imgui
+        )
 target_link_libraries(${Target} PRIVATE  SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)

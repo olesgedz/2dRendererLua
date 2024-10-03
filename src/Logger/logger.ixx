@@ -4,7 +4,7 @@ module;
 #include <iostream>
 #include <ctime>
 
-export module Logger;
+export module logger;
 
 std::string currentDateTimeToString();
 

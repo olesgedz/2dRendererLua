@@ -1,6 +1,6 @@
 module;
 
-export module MovementSystem;
+export module movementSystem;
 
 import ecs;
 

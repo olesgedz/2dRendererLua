@@ -1,6 +1,6 @@
 //#include <imgui.h>
 
-import Game;
+import game;
 
 int main(int argc, char* args[]) {
   Game game;
