@@ -25,6 +25,7 @@
     "version>=" : "2.8.0#1"
   }, {
     "name" : "imgui",
-    "version>=" : "1.90.7"
+    "version>=" : "1.90.7",
+    "features": ["docking-experimental"]
   } ]
 }
