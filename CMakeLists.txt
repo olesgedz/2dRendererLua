@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 
 set(Target ENGINE)
 
-if(DEFINED ENV{VCPKG_ROOT})
-        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-endif()
+#if(DEFINED ENV{VCPKG_ROOT})
+#        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+#endif()
 
 project(${Target})
 
@@ -40,7 +40,7 @@ target_sources(${Target}
         ${header_files}     # Header files
         )
 
-
+message(STATUS "imgui_INCLUDE_DIRS: ${IMGUI_INCLUDE_DIRS}")
 
 target_include_directories(${Target}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
