@@ -7,8 +7,8 @@ module;
 #include <filesystem>
 #include <imgui.h>
 
-export module Game;
-export import Logger;
+export module game;
+export import logger;
 import ecs;
 
 export class Game {
