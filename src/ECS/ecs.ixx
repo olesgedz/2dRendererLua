@@ -20,6 +20,8 @@ struct BaseComponent {
   static int _nextId;
 };
 
+int BaseComponent::_nextId = 0;
+
 template <typename T>
 class Component : public BaseComponent {
   static int getId() {
@@ -41,7 +43,6 @@ class Entity {
   bool operator==(const Entity& other) const { return _id == other._id; }
   bool operator>(const Entity& other) const { return _id > other._id; }
   bool operator<(const Entity& other) const { return _id < other._id; }
-
   bool operator!=(const Entity& other) const { return _id != other._id; }
 
  private:
@@ -99,6 +100,12 @@ export class Registry {
   template <typename T, typename... TArgs>
   void addComponent(Entity entity, TArgs&&... args);
 
+  template <typename T>
+  void removeComponent(Entity entity);
+
+  template <typename T>
+  bool hasComponent(Entity entity) const;
+
   //  void addComponent(Entity entity, IPool* pool);
   //  void getComponent(Entity entity);
   //  void addSystem(System* system);
@@ -141,6 +148,22 @@ void Registry::update() {
   // TODO: Add entities to systems
 }
 
+template <typename T>
+bool Registry::hasComponent(Entity entity) const {
+    const auto componentId = Component<T>::getId();
+    const auto entityId = entity.getId();
+
+  return _entityComponentSignatures[entityId].test(componentId);
+}
+
+template <typename T>
+void Registry::removeComponent(Entity entity) {
+  const auto componentId = Component<T>::getId();
+  const auto entityId = entity.getId();
+
+  _entityComponentSignatures[entityId].set(componentId, false);
+}
+
 template <typename T, typename... TArgs>
 void Registry::addComponent(Entity entity, TArgs&&... args) {
   const auto componentId = Component<T>::getId();
@@ -154,7 +177,7 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   // Need to create a new component pool
   if (!_componentPools[componentId]) {
     Pool<T>* newComponentPool = new Pool<T>();
-    _componentPools[componentId] =  newComponentPool;
+    _componentPools[componentId] = newComponentPool;
   }
 
   // Get the needed component pool
@@ -170,5 +193,5 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   componentPool->set(entityId, newComponent);
 
   // Change the signature of the entity to include the component
-  entityComponentSignatures[entityId].set(componentId);
+  _entityComponentSignatures[entityId].set(componentId, true);
 }
