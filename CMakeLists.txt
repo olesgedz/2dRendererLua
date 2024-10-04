@@ -2,17 +2,13 @@ cmake_minimum_required(VERSION 3.28)
 
 set(Target ENGINE)
 
-if(DEFINED ENV{VCPKG_ROOT})
-        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-endif()
-
 project(${Target})
 
 set(CMAKE_CXX_STANDARD 20)
 
-if(DEFINED ENV{VCPKG_ROOT})
-        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-endif()
+#if(DEFINED ENV{VCPKG_ROOT})
+#        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+#endif()
 file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.hpp")
 file(GLOB_RECURSE module_files "src/*.ixx")
