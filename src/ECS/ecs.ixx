@@ -7,6 +7,7 @@ module;
 #include <typeindex>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
 
 export module ecs;
 import pool;
