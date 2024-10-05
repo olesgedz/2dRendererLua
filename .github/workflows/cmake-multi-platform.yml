@@ -50,9 +50,16 @@ jobs:
       shell: bash
       run: |
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-    - name: Vcpkg
-      run: >
-        vcpkg install
+    - name: vcpkg build
+      uses: johnwason/vcpkg-action@v6
+      id: vcpkg
+      with:
+        pkgs: boost-date-time
+        triplet: ${{ matrix.config.vcpkg_triplet }}
+        cache-key: ${{ matrix.config.os }}
+        revision: master
+        token: ${{ github.token }}
+        github-binarycache: true
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
