@@ -123,7 +123,8 @@ export class Registry {
   // Vector of signatures, each signature represents the components an entity has
   // Vector index is the entity id
   std::vector<Signature> _entityComponentSignatures;
-  std::unordered_map<std::type_index, System*> _entityIdToIndex;
+
+  std::unordered_map<std::type_index, System*> _systems;
 
   std::set<Entity> _entitiesToBeAdded;
   std::set<Entity> _entitiesToBeKilled;
