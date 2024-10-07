@@ -31,7 +31,7 @@ class Component : public BaseComponent {
   }
 };
 
-class Entity {
+export class Entity {
  public:
   Entity(int id) : _id(id) {};
 
@@ -156,6 +156,9 @@ Entity Registry::createEntity() {
 
   Entity entity(entityId);
   _entitiesToBeAdded.insert(entity);
+  if (entityId >= _entityComponentSignatures.size()) {
+    _entityComponentSignatures.resize(entityId + 1);
+  }
 
   Logger::log("Entity created with id: " + std::to_string(entityId));
 
@@ -164,8 +167,14 @@ Entity Registry::createEntity() {
 
 void Registry::update() {
   // Actually add/remove  the entities between frames
-  // TODO: Add entities to systems
+  for (const auto& entity : _entitiesToBeAdded) {
+    addEntityToSystem(entity);
+    Logger::log("Entity added to system" + std::to_string(entity.getId()));
+  }
+  _entitiesToBeAdded.clear();
+  // TODO: Remove entities to systems
 }
+
 void Registry::addEntityToSystem(Entity entity) {
   const auto entityId = entity.getId();
 
@@ -173,7 +182,7 @@ void Registry::addEntityToSystem(Entity entity) {
 
   // loop all the systems
   for (auto& system : _systems) {
-    const auto systemSignature = system->getComponentSignature();
+    const auto systemSignature = system.second->getComponentSignature();
 
     // Check if the entity signature matches the system signature
     if ((entitySignature & systemSignature) == systemSignature) {

@@ -1,19 +1,21 @@
 module;
 
 #include <SDL2/SDL.h>
-#include <SDL_video.h>
 #include <SDL_image.h>
-#include <glm/glm.hpp>
-#include <filesystem>
+#include <SDL_video.h>
 #include <imgui.h>
+
+#include <filesystem>
+#include <glm/glm.hpp>
 
 export module game;
 export import logger;
 import ecs;
 
 export class Game {
-public:
+ public:
   Game();
+ ~Game();
 
   void initialize();
   void run();
@@ -23,7 +25,8 @@ public:
   void render();
   void destroy();
 
-private:
+ private:
+  Registry* _registry;
 
   float _millisecondsPreviousFrame = 0.0f;
   float _deltaTime = 0.0f;
@@ -40,7 +43,16 @@ private:
   const bool _uncapFramerate = true;
 };
 
-Game::Game() {}
+Game::Game() {
+        isRunning = false;
+        _registry = new Registry();
+        Logger::log("Game constructor called!");
+}
+
+Game::~Game() {
+  delete _registry;
+  Logger::log("Game destructor called!");
+}
 
 void Game::initialize() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
@@ -72,6 +84,8 @@ void Game::initialize() {
 }
 
 void Game::setup() {
+  Entity tank = _registry->createEntity();
+  Entity truck = _registry->createEntity();
 }
 
 void Game::run() {
@@ -90,10 +104,10 @@ void Game::processInput() {
     switch (event.type) {
       case SDL_QUIT:
         isRunning = false;
-      break;
+        break;
       case SDL_KEYDOWN:
         if (event.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
-      break;
+        break;
       default:
         break;
     }
@@ -107,7 +121,6 @@ void Game::update() {
   _deltaTime = (SDL_GetTicks() - _millisecondsPreviousFrame) / 1000.0f;
 
   _millisecondsPreviousFrame = SDL_GetTicks();
-
 }
 
 void Game::render() {
