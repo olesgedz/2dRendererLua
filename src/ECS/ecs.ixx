@@ -96,8 +96,12 @@ export class Registry {
   Registry() = default;
 
   void update();
+
+  // Entity Management
   Entity createEntity();
 
+
+  // Component Management
   template <typename T, typename... TArgs>
   void addComponent(Entity entity, TArgs&&... args);
 
@@ -107,10 +111,23 @@ export class Registry {
   template <typename T>
   bool hasComponent(Entity entity) const;
 
-  //  void addComponent(Entity entity, IPool* pool);
-  //  void getComponent(Entity entity);
-  //  void addSystem(System* system);
-  //  void addEntityToSystem(Entity entity);
+
+
+  // System Management
+  template<typename TSystem, typename... TArgs>
+  void addSystem(TArgs&&... args);
+
+  template<typename TSystem>
+  void removeSystem();
+
+  template<typename TSystem>
+ bool hasSystem() const;
+
+  template<typename TSystem>
+  TSystem& getSystem() const;
+
+  // Checks the component signature of the entity and adds it to the system if it matches
+   void addEntityToSystem(Entity entity);
 
  private:
   // Keeps track number of the entities
@@ -148,6 +165,21 @@ Entity Registry::createEntity() {
 void Registry::update() {
   // Actually add/remove  the entities between frames
   // TODO: Add entities to systems
+}
+void Registry::addEntityToSystem(Entity entity) {
+  const auto entityId = entity.getId();
+
+  const auto entitySignature = _entityComponentSignatures[entityId];
+
+  // loop all the systems
+  for (auto& system : _systems) {
+    const auto systemSignature = system->getComponentSignature();
+
+    // Check if the entity signature matches the system signature
+    if ((entitySignature & systemSignature) == systemSignature) {
+      system.second->addEntity(entity);
+    }
+  }
 }
 
 template <typename T>
@@ -196,4 +228,26 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
 
   // Change the signature of the entity to include the component
   _entityComponentSignatures[entityId].set(componentId, true);
+}
+
+
+template<typename TSystem, typename ...TArgs>
+void Registry::addSystem(TArgs&& ...args) {
+  TSystem* system = new TSystem(std::forward<TArgs>(args)...);
+  _systems.insert(std::make_pair(std::type_index(typeid(TSystem)), system));
+}
+
+template<typename TSystem>
+void Registry::removeSystem() {
+  _systems.erase(std::type_index(typeid(TSystem)));
+}
+
+template<typename TSystem>
+bool Registry::hasSystem() const {
+  return _systems.contains(std::type_index(typeid(TSystem)));
+}
+
+template<typename TSystem>
+TSystem& Registry::getSystem() const {
+  return  std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
 }
