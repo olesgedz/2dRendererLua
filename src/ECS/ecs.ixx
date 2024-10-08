@@ -136,7 +136,7 @@ export class Registry {
   // Vector of component pools, each pool stores a specific component type
   // Vector index is the component id
   // Pool index is the component id
-  std::vector<IPool*> _componentPools;
+  std::vector<std::shared_ptr<IPool>> _componentPools;
   // Vector of signatures, each signature represents the components an entity has
   // Vector index is the entity id
   std::vector<Signature> _entityComponentSignatures;
@@ -219,7 +219,7 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
 
   // Need to create a new component pool
   if (!_componentPools[componentId]) {
-    Pool<T>* newComponentPool = new Pool<T>();
+    std::shared_ptr<Pool<T>> newComponentPool = std::make_shared<Pool<T>>();
     _componentPools[componentId] = newComponentPool;
   }
 
