@@ -26,7 +26,7 @@ export class Game {
   void destroy();
 
  private:
-  Registry* _registry;
+  std::unique_ptr<Registry> _registry;
 
   float _millisecondsPreviousFrame = 0.0f;
   float _deltaTime = 0.0f;
@@ -45,12 +45,11 @@ export class Game {
 
 Game::Game() {
         isRunning = false;
-        _registry = new Registry();
+        _registry = std::make_unique<Registry>();
         Logger::log("Game constructor called!");
 }
 
 Game::~Game() {
-  delete _registry;
   Logger::log("Game destructor called!");
 }
 
