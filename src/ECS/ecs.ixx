@@ -17,7 +17,7 @@ constexpr unsigned int MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
 struct BaseComponent {
- protected:
+protected:
   static int _nextId;
 };
 
@@ -32,8 +32,9 @@ class Component : public BaseComponent {
 };
 
 export class Entity {
- public:
-  Entity(int id) : _id(id) {};
+public:
+  Entity(int id) : _id(id) {
+  };
 
   Entity(const Entity& other) = default;
 
@@ -46,7 +47,7 @@ export class Entity {
   bool operator<(const Entity& other) const { return _id < other._id; }
   bool operator!=(const Entity& other) const { return _id != other._id; }
 
- private:
+private:
   int _id;
 };
 
@@ -55,7 +56,7 @@ export class Entity {
  */
 
 export class System {
- public:
+public:
   System() = default;
   ~System() = default;
 
@@ -72,7 +73,7 @@ export class System {
     _componentSignature.set(componentId);
   }
 
- private:
+private:
   Signature _componentSignature;
   std::vector<Entity> _entities;
 };
@@ -80,9 +81,7 @@ export class System {
 void System::addEntity(Entity entity) { _entities.push_back(entity); }
 
 void System::removeEntityFromSystem(Entity entity) {
-  _entities.erase(
-      std::remove_if(_entities.begin(), _entities.end(), [&entity](Entity& other) { return other == entity; }),
-      _entities.end());
+  std::erase_if(_entities, [&entity](const Entity& other) { return other == entity; });
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +91,7 @@ void System::removeEntityFromSystem(Entity entity) {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 export class Registry {
- public:
+public:
   Registry() = default;
 
   void update();
@@ -109,27 +108,26 @@ export class Registry {
   void removeComponent(Entity entity);
 
   template <typename T>
-  bool hasComponent(Entity entity) const;
-
+  [[nodiscard]] bool hasComponent(Entity entity) const;
 
 
   // System Management
-  template<typename TSystem, typename... TArgs>
+  template <typename TSystem, typename... TArgs>
   void addSystem(TArgs&&... args);
 
-  template<typename TSystem>
+  template <typename TSystem>
   void removeSystem();
 
-  template<typename TSystem>
- bool hasSystem() const;
+  template <typename TSystem>
+  [[nodiscard]] bool hasSystem() const;
 
-  template<typename TSystem>
+  template <typename TSystem>
   TSystem& getSystem() const;
 
   // Checks the component signature of the entity and adds it to the system if it matches
-   void addEntityToSystem(Entity entity);
+  void addEntityToSystem(Entity entity);
 
- private:
+private:
   // Keeps track number of the entities
   int _numEntities = 0;
 
@@ -141,7 +139,7 @@ export class Registry {
   // Vector index is the entity id
   std::vector<Signature> _entityComponentSignatures;
 
-  std::unordered_map<std::type_index, System*> _systems;
+  std::unordered_map<std::type_index, std::shared_ptr<System>> _systems;
 
   std::set<Entity> _entitiesToBeAdded;
   std::set<Entity> _entitiesToBeKilled;
@@ -193,8 +191,8 @@ void Registry::addEntityToSystem(Entity entity) {
 
 template <typename T>
 bool Registry::hasComponent(Entity entity) const {
-    const auto componentId = Component<T>::getId();
-    const auto entityId = entity.getId();
+  const auto componentId = Component<T>::getId();
+  const auto entityId = entity.getId();
 
   return _entityComponentSignatures[entityId].test(componentId);
 }
@@ -224,7 +222,7 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   }
 
   // Get the needed component pool
-  Pool<T>* componentPool = Pool<T>(_componentPools[componentId]);
+auto componentPool = Pool<T>(_componentPools[componentId]);
 
   if (entityId >= componentPool->size()) {
     componentPool->resize(_numEntities);
@@ -240,23 +238,23 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
 }
 
 
-template<typename TSystem, typename ...TArgs>
-void Registry::addSystem(TArgs&& ...args) {
-  TSystem* system = new TSystem(std::forward<TArgs>(args)...);
+template <typename TSystem, typename... TArgs>
+void Registry::addSystem(TArgs&&... args) {
+  auto system = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
   _systems.insert(std::make_pair(std::type_index(typeid(TSystem)), system));
 }
 
-template<typename TSystem>
+template <typename TSystem>
 void Registry::removeSystem() {
   _systems.erase(std::type_index(typeid(TSystem)));
 }
 
-template<typename TSystem>
+template <typename TSystem>
 bool Registry::hasSystem() const {
   return _systems.contains(std::type_index(typeid(TSystem)));
 }
 
-template<typename TSystem>
+template <typename TSystem>
 TSystem& Registry::getSystem() const {
-  return  std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
+  return std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
 }
