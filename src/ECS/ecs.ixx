@@ -13,42 +13,54 @@ export module ecs;
 import pool;
 import logger;
 
-constexpr unsigned int MAX_COMPONENTS = 32;
+export class Registry;
+
+
+constexpr  size_t MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
 struct BaseComponent {
 protected:
-  static int _nextId;
+  static size_t _nextId;
 };
 
-int BaseComponent::_nextId = 0;
+size_t BaseComponent::_nextId = 0;
 
 template <typename T>
 class Component : public BaseComponent {
-  static int getId() {
-    static int id = _nextId++;
+public:
+  static size_t getId() {
+    static size_t id = _nextId++;
     return id;
   }
 };
 
 export class Entity {
 public:
-  Entity(int id) : _id(id) {
+  Entity(size_t id) : _id(id) {
   };
 
   Entity(const Entity& other) = default;
 
   Entity& operator=(const Entity& other) = default;
 
-  int getId() const { return _id; }
+  size_t getId() const { return _id; }
 
   bool operator==(const Entity& other) const { return _id == other._id; }
   bool operator>(const Entity& other) const { return _id > other._id; }
   bool operator<(const Entity& other) const { return _id < other._id; }
   bool operator!=(const Entity& other) const { return _id != other._id; }
 
+
+  template<typename TComponent, typename ...TArgs> void addComponent(TArgs&&... args);
+  template<typename TComponent, typename ...TArgs> void removeComponent();
+  template<typename TComponent, typename ...TArgs> bool hasComponent() const;
+  template<typename TComponent, typename ...TArgs> TComponent& getComponent() const;
+
+  mutable Registry* registry;
+
 private:
-  int _id;
+  size_t _id;
 };
 
 /*
@@ -94,6 +106,26 @@ export class Registry {
 public:
   Registry() = default;
 
+
+  //Move constructor
+  Registry(Registry&& other) noexcept {
+    _numEntities = other._numEntities;
+    _componentPools = std::move(other._componentPools);
+    _entityComponentSignatures = std::move(other._entityComponentSignatures);
+    _systems = std::move(other._systems);
+    _entitiesToBeAdded = std::move(other._entitiesToBeAdded);
+    _entitiesToBeKilled = std::move(other._entitiesToBeKilled);
+  }
+//copy constructor
+  Registry(const Registry& other) {
+    _numEntities = other._numEntities;
+    _componentPools = other._componentPools;
+    _entityComponentSignatures = other._entityComponentSignatures;
+    _systems = other._systems;
+    _entitiesToBeAdded = other._entitiesToBeAdded;
+    _entitiesToBeKilled = other._entitiesToBeKilled;
+  }
+
   void update();
 
   // Entity Management
@@ -110,7 +142,8 @@ public:
   template <typename T>
   [[nodiscard]] bool hasComponent(Entity entity) const;
 
-
+  template <typename T>
+  [[nodiscard]] T& getComponent(Entity entity) const;
   // System Management
   template <typename TSystem, typename... TArgs>
   void addSystem(TArgs&&... args);
@@ -146,13 +179,13 @@ private:
 };
 
 Entity Registry::createEntity() {
-  int entityId = _numEntities++;
+  size_t entityId = _numEntities++;
 
   if (entityId >= _entityComponentSignatures.size()) {
     _entityComponentSignatures.resize(entityId + 1);
   }
-
-  Entity entity(entityId);
+  const Entity entity(entityId);
+  entity.registry = this;
   _entitiesToBeAdded.insert(entity);
   if (entityId >= _entityComponentSignatures.size()) {
     _entityComponentSignatures.resize(entityId + 1);
@@ -205,6 +238,14 @@ void Registry::removeComponent(Entity entity) {
   _entityComponentSignatures[entityId].set(componentId, false);
 }
 
+template <typename T>
+T& Registry::getComponent(Entity entity) const {
+  const auto componentId = Component<T>::getId();
+  const auto entityId = entity.getId();
+  return   _componentPools[entityId];
+}
+
+
 template <typename T, typename... TArgs>
 void Registry::addComponent(Entity entity, TArgs&&... args) {
   const auto componentId = Component<T>::getId();
@@ -222,9 +263,9 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   }
 
   // Get the needed component pool
-auto componentPool = Pool<T>(_componentPools[componentId]);
+auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
 
-  if (entityId >= componentPool->size()) {
+  if (entityId >= componentPool->getSize()) {
     componentPool->resize(_numEntities);
   }
   // Create component of type T and forward args to it's constructor
@@ -235,6 +276,7 @@ auto componentPool = Pool<T>(_componentPools[componentId]);
 
   // Change the signature of the entity to include the component
   _entityComponentSignatures[entityId].set(componentId, true);
+  Logger::log("Component added to entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
 }
 
 

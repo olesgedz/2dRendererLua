@@ -50,7 +50,7 @@ void Logger::log(const std::string& message) {
 
   messages.push_back(logEntry);
 
-  std::cout << "\x1B[32m" << message << "\033[0m" << std::endl;
+  std::cout << "\x1B[32m" << logEntry.message << "\033[0m" << std::endl;
 }
 
 std::string currentDateTimeToString() {

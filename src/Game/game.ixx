@@ -10,6 +10,8 @@ module;
 
 export module game;
 export import logger;
+import transformComponent;
+import rigidBodyComponent;
 import ecs;
 
 export class Game {
@@ -84,7 +86,9 @@ void Game::initialize() {
 
 void Game::setup() {
   Entity tank = _registry->createEntity();
-  Entity truck = _registry->createEntity();
+
+  _registry->addComponent<TransformComponent>(tank, glm::vec2(10.0f, 20.f), glm::vec2(1.0f, 1.0f), 0.0);
+  _registry->addComponent<RigidBodyComponent>(tank, glm::vec2(50.0f, 0.f));
 }
 
 void Game::run() {
