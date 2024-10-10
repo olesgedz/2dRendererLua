@@ -12,6 +12,7 @@ export module game;
 export import logger;
 import transformComponent;
 import rigidBodyComponent;
+import movementSystem;
 import ecs;
 
 export class Game {
@@ -85,6 +86,7 @@ void Game::initialize() {
 }
 
 void Game::setup() {
+  _registry->addSystem<MovementSystem>();
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(10.0f, 20.f), glm::vec2(1.0f, 1.0f), 0.0);
@@ -124,6 +126,12 @@ void Game::update() {
   _deltaTime = (SDL_GetTicks() - _millisecondsPreviousFrame) / 1000.0f;
 
   _millisecondsPreviousFrame = SDL_GetTicks();
+
+  //Systems updates
+  _registry->getSystem<MovementSystem>().update();
+
+  //Update the registry to process the entities to be added or killed
+  _registry->update();
 }
 
 void Game::render() {
