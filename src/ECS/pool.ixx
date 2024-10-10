@@ -57,7 +57,7 @@ public:
   }
 
   T& get(int index) {
-    return static_cast<T>(_data[index]);
+    return static_cast<T&>(_data[index]);
   }
 
   void remove(int index) {
@@ -65,7 +65,7 @@ public:
   }
 
   T& operator [](unsigned int index) {
-    return static_cast<T>(_data[index]);
+    return _data[index];
   }
 
 private:

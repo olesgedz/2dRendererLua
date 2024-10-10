@@ -54,7 +54,7 @@ public:
   template<typename TComponent, typename ...TArgs> void addComponent(TArgs&&... args);
   template<typename TComponent, typename ...TArgs> void removeComponent();
   template<typename TComponent, typename ...TArgs> bool hasComponent() const;
-  template<typename TComponent, typename ...TArgs> TComponent& getComponent() const;
+  template<typename TComponent, typename ...TArgs> TComponent& getComponent();
 
   class Registry* registry;
 
@@ -209,7 +209,7 @@ void Registry::update() {
 void Registry::addEntityToSystem(Entity entity) {
   const auto entityId = entity.getId();
 
-  const auto entitySignature = _entityComponentSignatures[entityId];
+   auto entitySignature = _entityComponentSignatures[entityId];
 
   // loop all the systems
   for (auto& system : _systems) {
@@ -236,6 +236,8 @@ void Registry::removeComponent(Entity entity) {
   const auto entityId = entity.getId();
 
   _entityComponentSignatures[entityId].set(componentId, false);
+  Logger::log("Component removed from entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
+
 }
 
 template <typename T>
@@ -299,7 +301,7 @@ bool Registry::hasSystem() const {
 
 template <typename TSystem>
 TSystem& Registry::getSystem() const {
-  return std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
+  return *std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
 }
 
 /*
@@ -323,7 +325,8 @@ bool Entity::hasComponent() const {
 }
 
 template<typename TComponent, typename ...TArgs>
-TComponent& Entity::getComponent() const {
+TComponent& Entity::getComponent() {
+
   return registry->getComponent<TComponent>(*this);
 }
 
