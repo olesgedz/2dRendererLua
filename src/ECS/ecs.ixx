@@ -15,7 +15,6 @@ import logger;
 
 export class Registry;
 
-
 constexpr  size_t MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
@@ -57,11 +56,12 @@ public:
   template<typename TComponent, typename ...TArgs> bool hasComponent() const;
   template<typename TComponent, typename ...TArgs> TComponent& getComponent() const;
 
-  mutable Registry* registry;
+  class Registry* registry;
 
 private:
   size_t _id;
 };
+
 
 /*
  * System class
@@ -184,7 +184,7 @@ Entity Registry::createEntity() {
   if (entityId >= _entityComponentSignatures.size()) {
     _entityComponentSignatures.resize(entityId + 1);
   }
-  const Entity entity(entityId);
+  Entity entity(entityId);
   entity.registry = this;
   _entitiesToBeAdded.insert(entity);
   if (entityId >= _entityComponentSignatures.size()) {
@@ -242,7 +242,8 @@ template <typename T>
 T& Registry::getComponent(Entity entity) const {
   const auto componentId = Component<T>::getId();
   const auto entityId = entity.getId();
-  return   _componentPools[entityId];
+  auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
+  return   componentPool->get(entityId);
 }
 
 
@@ -300,3 +301,29 @@ template <typename TSystem>
 TSystem& Registry::getSystem() const {
   return std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
 }
+
+/*
+ * Entity class methods
+ * TODO: Move to separate file or move up?
+ */
+
+template<typename TComponent, typename ...TArgs>
+void Entity::addComponent(TArgs&&... args) {
+  registry->addComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+}
+
+template<typename TComponent, typename ...TArgs>
+void Entity::removeComponent() {
+  registry->removeComponent<TComponent>(*this);
+}
+
+template<typename TComponent, typename ...TArgs>
+bool Entity::hasComponent() const {
+  return registry->hasComponent<TComponent>(*this);
+}
+
+template<typename TComponent, typename ...TArgs>
+TComponent& Entity::getComponent() const {
+  return registry->getComponent<TComponent>(*this);
+}
+
