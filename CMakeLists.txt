@@ -6,14 +6,13 @@ project(${Target})
 
 set(CMAKE_CXX_STANDARD 20)
 
-#if(DEFINED ENV{VCPKG_ROOT})
-#        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-#endif()
+if(DEFINED ENV{VCPKG_ROOT})
+        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+endif()
 file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.hpp")
 file(GLOB_RECURSE module_files "src/*.ixx")
 #
-find_package(imgui CONFIG REQUIRED)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -21,6 +20,7 @@ find_package(Lua REQUIRED)
 find_package(SDL2_mixer CONFIG REQUIRED)
 find_package(SDL2_ttf CONFIG REQUIRED)
 find_package(sol2 CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
 
 add_executable(${Target})
 
