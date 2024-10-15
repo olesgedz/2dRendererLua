@@ -63,8 +63,8 @@ jobs:
           ls -lar &&
           mkdir build &&
           cd build &&
-          cmake .. -G "Ninja" -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake --build . -- -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake .. -G "Ninja" --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake --parallel --build . -- --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
 
 #      - name: Test
 #        working-directory: ${{ steps.strings.outputs.build-output-dir }}
