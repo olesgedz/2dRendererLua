@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: [ windows-latest, ubuntu-latest ]
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -28,9 +28,11 @@ jobs:
           - os: windows-latest
             c_compiler: cl
             cpp_compiler: cl
+            generator: "Visual Studio 17 2022"
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
+            generator: "Ninja"
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -61,7 +63,7 @@ jobs:
         run: >
           mkdir build &&
           cd build &&
-          cmake .. --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake &&
+          cmake -G ${{matrix.generator}} .. --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake &&
           cmake --build . --parallel
 
 #      - name: Test
