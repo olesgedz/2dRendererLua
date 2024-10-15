@@ -38,10 +38,11 @@ jobs:
             c_compiler: clang
           - os: ubuntu-latest
             c_compiler: cl
+        env:
+          VCPKG_ROOT: "${{ github.workspace }}/.vcpkg"
 
     steps:
       - uses: actions/checkout@v3
-
       - name: Set reusable strings
         # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
         id: strings
@@ -50,8 +51,9 @@ jobs:
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
       - name: Setup vcpkg
         run: |
-          git clone https://github.com/microsoft/vcpkg.git
-          ./vcpkg/bootstrap-vcpkg.sh
+          git clone https://github.com/microsoft/vcpkg.git &&
+          ./vcpkg/bootstrap-vcpkg.sh &&
+          ls -lar
         env:
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
       - name: vcpkg build
