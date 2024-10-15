@@ -62,7 +62,7 @@ jobs:
           mkdir build &&
           cd build &&
           cmake .. -G "Ninja" --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake --build . -- --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake --build . --parallel
 
 #      - name: Test
 #        working-directory: ${{ steps.strings.outputs.build-output-dir }}
