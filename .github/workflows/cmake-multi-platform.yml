@@ -50,8 +50,7 @@ jobs:
       - name: Setup vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git &&
-          ./vcpkg/bootstrap-vcpkg.sh &&
-          ls -lar
+          ./vcpkg/bootstrap-vcpkg.sh
         env:
           VCPKG_ROOT: ${{ github.workspace }}/vcpkg
       - name: vcpkg build
@@ -60,11 +59,10 @@ jobs:
         # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
         # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
         run: >
-          ls -lar &&
           mkdir build &&
           cd build &&
           cmake .. -G "Ninja" --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
-          cmake --parallel --build . -- --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
+          cmake --build . -- --toolchain=../vcpkg/scripts/buildsystems/vcpkg.cmake
 
 #      - name: Test
 #        working-directory: ${{ steps.strings.outputs.build-output-dir }}
