@@ -128,7 +128,7 @@ void Game::update() {
   _millisecondsPreviousFrame = SDL_GetTicks();
 
   //Systems updates
-  _registry->getSystem<MovementSystem>().update();
+  _registry->getSystem<MovementSystem>().update(_deltaTime);
 
   //Update the registry to process the entities to be added or killed
   _registry->update();

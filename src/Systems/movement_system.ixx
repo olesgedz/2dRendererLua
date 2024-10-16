@@ -13,7 +13,7 @@ import ecs;
 export class MovementSystem : public System {
 public:
   MovementSystem();
-  void update() const;
+  void update(float deltaTime) const;
 };
 
 MovementSystem::MovementSystem() : System() {
@@ -21,14 +21,15 @@ MovementSystem::MovementSystem() : System() {
   requireComponent<RigidBodyComponent>();
 }
 
-void MovementSystem::update() const {
+void MovementSystem::update(float deltaTime) const {
   for (auto& entity : getSystemEntities()) {
     auto& transform = entity.getComponent<TransformComponent>();
     const auto& rigidBody = entity.getComponent<RigidBodyComponent>();
 
-    transform.position += rigidBody.velocity;
+    transform.position += rigidBody.velocity * deltaTime;
 
     Logger::log(
-        "Updating entity " + std::to_string(entity.getId()) + " position " + glm::to_string(transform.position));
+        "Updating entity " + std::to_string(entity.getId()) +
+        " position " + glm::to_string(transform.position));
   }
 }
