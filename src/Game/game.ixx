@@ -14,6 +14,7 @@ import transformComponent;
 import rigidBodyComponent;
 import movementSystem;
 import ecs;
+import renderSystem;
 
 export class Game {
  public:
@@ -87,10 +88,19 @@ void Game::initialize() {
 
 void Game::setup() {
   _registry->addSystem<MovementSystem>();
+  _registry->addSystem<RenderSystem>();
+
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(10.0f, 20.f), glm::vec2(1.0f, 1.0f), 0.0);
   tank.addComponent<RigidBodyComponent>(glm::vec2(50.0f, 0.f));
+  tank.addComponent<SpriteComponent>(glm::vec2(10, 10.f));
+
+  Entity truck = _registry->createEntity();
+
+  truck.addComponent<TransformComponent>(glm::vec2(100.0f, 40.f), glm::vec2(1.0f, 1.0f), 0.0);
+  truck.addComponent<RigidBodyComponent>(glm::vec2(5.0f, 30.f));
+  truck.addComponent<SpriteComponent>(glm::vec2(50, 10.f), glm::vec4(255.f, 255.f, 255.f, 255.f));
 }
 
 void Game::run() {
@@ -137,6 +147,8 @@ void Game::update() {
 void Game::render() {
   SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
   SDL_RenderClear(_renderer);
+
+  _registry->getSystem<RenderSystem>().update(_renderer);
 
   SDL_RenderPresent(_renderer);
 }
