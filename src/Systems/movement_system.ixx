@@ -27,9 +27,5 @@ void MovementSystem::update(float deltaTime) const {
     const auto& rigidBody = entity.getComponent<RigidBodyComponent>();
 
     transform.position += rigidBody.velocity * deltaTime;
-
-    Logger::log(
-        "Updating entity " + std::to_string(entity.getId()) +
-        " position " + glm::to_string(transform.position));
   }
 }
