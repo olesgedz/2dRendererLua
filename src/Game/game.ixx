@@ -15,6 +15,7 @@ import rigidBodyComponent;
 import movementSystem;
 import ecs;
 import renderSystem;
+import assetStorage;
 
 export class Game {
  public:
@@ -31,6 +32,7 @@ export class Game {
 
  private:
   std::unique_ptr<Registry> _registry;
+  std::unique_ptr<AssetStorage> _assetStorage;
 
   float _millisecondsPreviousFrame = 0.0f;
   float _deltaTime = 0.0f;
@@ -50,6 +52,7 @@ export class Game {
 Game::Game() {
         isRunning = false;
         _registry = std::make_unique<Registry>();
+        _assetStorage = std::make_unique<AssetStorage>();
         Logger::log("Game constructor called!");
 }
 
@@ -69,7 +72,7 @@ void Game::initialize() {
   windowHeight = 600;
   // Create a window
   _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
-                             SDL_WINDOW_BORDERLESS);
+                             SDL_WINDOW_RESIZABLE);
 
   if (!_window) {
     Logger::err("Error creating SDL window");
@@ -90,17 +93,20 @@ void Game::setup() {
   _registry->addSystem<MovementSystem>();
   _registry->addSystem<RenderSystem>();
 
+  _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
+  _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
+
   Entity tank = _registry->createEntity();
 
-  tank.addComponent<TransformComponent>(glm::vec2(10.0f, 20.f), glm::vec2(1.0f, 1.0f), 0.0);
-  tank.addComponent<RigidBodyComponent>(glm::vec2(50.0f, 0.f));
-  tank.addComponent<SpriteComponent>(glm::vec2(10, 10.f));
+  tank.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(3.0f, 3.0f), 35.f);
+  tank.addComponent<RigidBodyComponent>(glm::vec2(40.0f, 0.f));
+  tank.addComponent<SpriteComponent>("tank-image", glm::vec2(32.f, 32.f));
 
   Entity truck = _registry->createEntity();
 
-  truck.addComponent<TransformComponent>(glm::vec2(100.0f, 40.f), glm::vec2(1.0f, 1.0f), 0.0);
+  truck.addComponent<TransformComponent>(glm::vec2(100.0f, 40.f), glm::vec2(1.0f, 1.0f), 0.f);
   truck.addComponent<RigidBodyComponent>(glm::vec2(5.0f, 30.f));
-  truck.addComponent<SpriteComponent>(glm::vec2(50, 10.f), glm::vec4(255.f, 255.f, 255.f, 255.f));
+  truck.addComponent<SpriteComponent>("truck-image", glm::vec2(32.f, 32.f));
 }
 
 void Game::run() {
@@ -148,7 +154,7 @@ void Game::render() {
   SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
   SDL_RenderClear(_renderer);
 
-  _registry->getSystem<RenderSystem>().update(_renderer);
+  _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage);
 
   SDL_RenderPresent(_renderer);
 }

@@ -76,8 +76,8 @@ public:
 
   void removeEntityFromSystem(Entity entity);
 
-  std::vector<Entity> getSystemEntities() const { return _entities; }
-  const Signature& getComponentSignature() const { return _componentSignature; }
+  [[nodiscard]] std::vector<Entity> getSystemEntities() const { return _entities; }
+  [[nodiscard]] const Signature& getComponentSignature() const { return _componentSignature; }
 
   template <typename T>
   void requireComponent() {
@@ -200,7 +200,7 @@ void Registry::update() {
   // Actually add/remove  the entities between frames
   for (const auto& entity : _entitiesToBeAdded) {
     addEntityToSystem(entity);
-    Logger::log("Entity added to system" + std::to_string(entity.getId()));
+    Logger::log("Entity added to system: " + std::to_string(entity.getId()));
   }
   _entitiesToBeAdded.clear();
   // TODO: Remove entities to systems
