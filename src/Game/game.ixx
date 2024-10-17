@@ -4,8 +4,9 @@ module;
 #include <SDL_image.h>
 #include <SDL_video.h>
 #include <imgui.h>
-
+#include <iostream>
 #include <filesystem>
+#include <fstream>
 #include <glm/glm.hpp>
 
 export module game;
@@ -23,6 +24,7 @@ export class Game {
  ~Game();
 
   void initialize();
+  void loadLevel(int level);
   void run();
   void processInput();
   void setup();
@@ -90,17 +92,49 @@ void Game::initialize() {
 }
 
 void Game::setup() {
+}
+
+void Game::loadLevel(int level) {
   _registry->addSystem<MovementSystem>();
   _registry->addSystem<RenderSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
+  // Load TileMap
+  _assetStorage->addTexture("jungle-tilemap", _assetsPath / "tilemaps/jungle.png", _renderer);
+
+  // Load the tilemap
+  int tileSize = 32;
+  double tileScale = 2.0;
+  int mapNumCols = 25;
+  int mapNumRows = 20;
+
+  std::fstream mapFile;
+  mapFile.open(_assetsPath / "tilemapsjungle.map");
+
+  for (int y = 0; y < mapNumRows; y++) {
+    for (int x = 0; x < mapNumCols; x++) {
+      char ch;
+      mapFile.get(ch);
+      int srcRectY = std::atoi(&ch) * tileSize;
+      mapFile.get(ch);
+      int srcRectX = std::atoi(&ch) * tileSize;
+      mapFile.ignore();
+
+      Entity tile = _registry->createEntity();
+      tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
+                                            glm::vec2(tileScale, tileScale), 0.0);
+      tile.addComponent<SpriteComponent>("tilemapsjungle", glm::vec2(tileSize, tileSize), 0,
+                                         glm::vec2(srcRectX, srcRectY));
+    }
+  }
+  mapFile.close();
 
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(3.0f, 3.0f), 35.f);
   tank.addComponent<RigidBodyComponent>(glm::vec2(40.0f, 0.f));
-  tank.addComponent<SpriteComponent>("tank-image", glm::vec2(32.f, 32.f));
+  tank.addComponent<SpriteComponent>("tank-tilemap", glm::vec2(32.f, 32.f));
 
   Entity truck = _registry->createEntity();
 
