@@ -105,12 +105,16 @@ void Game::loadLevel(int level) {
 
   // Load the tilemap
   int tileSize = 32;
-  double tileScale = 2.0;
+  double tileScale = 1.0;
   int mapNumCols = 25;
   int mapNumRows = 20;
 
   std::fstream mapFile;
-  mapFile.open(_assetsPath / "tilemapsjungle.map");
+  mapFile.open(_assetsPath / "tilemaps/jungle.map");
+  if (!mapFile) {
+    Logger::err("Failed to open map file");
+    return;
+  }
 
   for (int y = 0; y < mapNumRows; y++) {
     for (int x = 0; x < mapNumCols; x++) {
