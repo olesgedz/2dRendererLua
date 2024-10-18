@@ -124,7 +124,7 @@ void Game::loadLevel(int level) {
       Entity tile = _registry->createEntity();
       tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
                                             glm::vec2(tileScale, tileScale), 0.0);
-      tile.addComponent<SpriteComponent>("tilemapsjungle", glm::vec2(tileSize, tileSize), 0,
+      tile.addComponent<SpriteComponent>("jungle-tilemap", glm::vec2(tileSize, tileSize), glm::vec4(0),
                                          glm::vec2(srcRectX, srcRectY));
     }
   }
@@ -134,7 +134,7 @@ void Game::loadLevel(int level) {
 
   tank.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(3.0f, 3.0f), 35.f);
   tank.addComponent<RigidBodyComponent>(glm::vec2(40.0f, 0.f));
-  tank.addComponent<SpriteComponent>("tank-tilemap", glm::vec2(32.f, 32.f));
+  tank.addComponent<SpriteComponent>("tank-image", glm::vec2(32.f, 32.f));
 
   Entity truck = _registry->createEntity();
 
