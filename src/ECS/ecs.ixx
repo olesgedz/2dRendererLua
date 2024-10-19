@@ -8,6 +8,7 @@ module;
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include <deque>
 
 export module ecs;
 import pool;
@@ -44,6 +45,7 @@ public:
   Entity& operator=(const Entity& other) = default;
 
   size_t getId() const { return _id; }
+  void kill();
 
   bool operator==(const Entity& other) const { return _id == other._id; }
   bool operator>(const Entity& other) const { return _id > other._id; }
@@ -131,6 +133,8 @@ public:
   // Entity Management
   Entity createEntity();
 
+  void killEntity(Entity entity);
+
 
   // Component Management
   template <typename T, typename... TArgs>
@@ -159,10 +163,14 @@ public:
 
   // Checks the component signature of the entity and adds it to the system if it matches
   void addEntityToSystem(Entity entity);
+  void removeEntityFromSystems(Entity entity);
 
 private:
   // Keeps track number of the entities
   int _numEntities = 0;
+
+  //Freed Ids that would be reused on create entity
+  std::deque<size_t> _freedIds;
 
   // Vector of component pools, each pool stores a specific component type
   // Vector index is the component id
@@ -179,11 +187,18 @@ private:
 };
 
 Entity Registry::createEntity() {
-  size_t entityId = _numEntities++;
+  size_t entityId;
+  if (_freedIds.empty()) {
+    entityId = _numEntities++;
 
-  if (entityId >= _entityComponentSignatures.size()) {
-    _entityComponentSignatures.resize(entityId + 1);
+    if (entityId >= _entityComponentSignatures.size()) {
+      _entityComponentSignatures.resize(entityId + 1);
+    }
+  } else {
+    entityId = _freedIds.front();
+    _freedIds.pop_front();
   }
+
   Entity entity(entityId);
   entity.registry = this;
   _entitiesToBeAdded.insert(entity);
@@ -196,6 +211,11 @@ Entity Registry::createEntity() {
   return entity;
 }
 
+void Registry::killEntity(Entity entity) {
+  _entitiesToBeKilled.insert(entity);
+}
+
+
 void Registry::update() {
   // Actually add/remove  the entities between frames
   for (const auto& entity : _entitiesToBeAdded) {
@@ -203,7 +223,15 @@ void Registry::update() {
     Logger::log("Entity added to system: " + std::to_string(entity.getId()));
   }
   _entitiesToBeAdded.clear();
-  // TODO: Remove entities to systems
+
+  for (auto entity : _entitiesToBeKilled) {
+    removeEntityFromSystems(entity);
+
+    _entityComponentSignatures[entity.getId()].reset();
+    // add to freed ids
+    _freedIds.push_back(entity.getId());
+  }
+  _entitiesToBeKilled.clear();
 }
 
 void Registry::addEntityToSystem(Entity entity) {
@@ -219,6 +247,12 @@ void Registry::addEntityToSystem(Entity entity) {
     if ((entitySignature & systemSignature) == systemSignature) {
       system.second->addEntity(entity);
     }
+  }
+}
+
+void Registry::removeEntityFromSystems(Entity entity) {
+  for (auto& system : _systems) {
+    system.second->removeEntityFromSystem(entity);
   }
 }
 
@@ -308,6 +342,10 @@ TSystem& Registry::getSystem() const {
  * Entity class methods
  * TODO: Move to separate file or move up?
  */
+
+void Entity::kill() {
+  registry->killEntity(*this);
+}
 
 template<typename TComponent, typename ...TArgs>
 void Entity::addComponent(TArgs&&... args) {

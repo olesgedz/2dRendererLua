@@ -27,45 +27,45 @@ public:
 
   void update() {
     auto entities = getSystemEntities();
-    for (auto entity : entities) {
-      const auto& boxCollider = entity.getComponent<BoxColliderComponent>();
-      const auto& transform = entity.getComponent<TransformComponent>();
-      Collider comparedCollider = {.boxCollider = boxCollider, .transform = transform};
-      for (auto other : entities) {
-        if (other.getId() == entity.getId())
+
+    // interested in
+    for (auto i = entities.begin(); i != entities.end(); i++) {
+      Entity compared = *i;
+
+      auto colliderCompared = compared.getComponent<BoxColliderComponent>();
+      auto transformCompared = compared.getComponent<TransformComponent>();
+      Collider dataCompared = {.boxCollider = colliderCompared, .transform = transformCompared};
+
+      //need to be checked
+      for (auto j = i; j != entities.end(); j++) {
+        Entity other = *j;
+
+        if (compared == other)
           continue;
+        auto colliderOther = other.getComponent<BoxColliderComponent>();
+        auto transformOther = other.getComponent<TransformComponent>();
 
-        const auto& boxColliderOther = other.getComponent<BoxColliderComponent>();
-        const auto& transformOther = other.getComponent<TransformComponent>();
+        Collider dataOther = {.boxCollider = colliderOther, .transform = transformOther};
 
-        Collider otherCollider = {.boxCollider = boxColliderOther, .transform = transformOther};
-
-        if (isCollided(comparedCollider, otherCollider)) {
-          Logger::log(std::to_string(entity.getId()) + " collided with " + std::to_string(other.getId()));
-          if (entity.hasComponent<RigidBodyComponent>()) {
-            auto& rigidBody = entity.getComponent<RigidBodyComponent>();
-            rigidBody.velocity = glm::vec2(0, rigidBody.velocity.y);
-          }
-          if (other.hasComponent<RigidBodyComponent>()) {
-            auto& rigidBody = other.getComponent<RigidBodyComponent>();
-            rigidBody.velocity = glm::vec2(0, rigidBody.velocity.y);
-          }
+        if (_checkAABBCollision(dataCompared, dataOther)) {
+          Logger::log(std::to_string(compared.getId()) + " collided with " + std::to_string(other.getId()));
         }
       }
     }
   }
 
 private:
-  bool isCollided(Collider& compared, Collider& other) {
+  bool _checkAABBCollision(Collider& compared, Collider& other) {
     bool collided = false;
-    if (compared.transform.position.x < other.transform.position.x + other.boxCollider.size.x * other.transform.scale.x
+    glm::vec2 positionCompared = compared.transform.position + compared.boxCollider.offset;
+    glm::vec2 positionOther = other.transform.position + other.boxCollider.offset;
+
+    if (positionCompared.x < positionOther.x + other.boxCollider.size.x * other.transform.scale.x
         &&
-        compared.transform.position.x + compared.boxCollider.size.x * compared.transform.scale.x > other.transform.
-        position.x &&
-        compared.transform.position.y < other.transform.position.y + other.boxCollider.size.y * other.transform.scale.y
+        positionCompared.x + compared.boxCollider.size.x * compared.transform.scale.x > positionOther.x &&
+        positionCompared.y < positionOther.y + other.boxCollider.size.y * other.transform.scale.y
         &&
-        compared.transform.position.y + compared.boxCollider.size.y * compared.transform.scale.y > other.transform.
-        position.y
+        positionCompared.y + compared.boxCollider.size.y * compared.transform.scale.y > positionOther.y
     )
       collided = true;
     return collided;

@@ -23,7 +23,7 @@ import renderSystem;
 import movementSystem;
 import animationSystem;
 import collisionSystem;
-
+import debugColliderSystem;
 
 export class Game {
  public:
@@ -48,19 +48,22 @@ export class Game {
 
   SDL_Window* _window;
   SDL_Renderer* _renderer;
-  bool isRunning;
+  bool _isRunning;
+  bool _isDebug;
   std::filesystem::path _assetsPath = "../assets";
 
-  int windowWidth;
-  int windowHeight;
+  int _windowWidth;
+  int _windowHeight;
   const int _fps = 60;
   const int _millisecondsPerFrame = 1000 / _fps;
   const bool _uncapFramerate = true;
 };
 
 Game::Game() {
-        isRunning = false;
-        _registry = std::make_unique<Registry>();
+  _isRunning = false;
+  _isDebug = false;
+
+  _registry = std::make_unique<Registry>();
         _assetStorage = std::make_unique<AssetStorage>();
         Logger::log("Game constructor called!");
 }
@@ -77,10 +80,10 @@ void Game::initialize() {
   SDL_DisplayMode displayMode;
   SDL_GetCurrentDisplayMode(0, &displayMode);
 
-  windowWidth = 800;
-  windowHeight = 600;
+  _windowWidth = 800;
+  _windowHeight = 600;
   // Create a window
-  _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowWidth, windowHeight,
+  _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _windowWidth, _windowHeight,
                              SDL_WINDOW_RESIZABLE);
 
   if (!_window) {
@@ -95,7 +98,7 @@ void Game::initialize() {
   }
 
   // SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN);
-  isRunning = true;
+  _isRunning = true;
 }
 
 void Game::setup() {
@@ -106,6 +109,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<RenderSystem>();
   _registry->addSystem<AnimationSystem>();
   _registry->addSystem<CollisionSystem>();
+  _registry->addSystem<DebugColliderSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -149,7 +153,7 @@ void Game::loadLevel(int level) {
 
   // UI
   Entity radar = _registry->createEntity();
-  radar.addComponent<TransformComponent>(glm::vec2(windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  radar.addComponent<TransformComponent>(glm::vec2(_windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
   radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f));
   radar.addComponent<AnimationComponent>(8, 5, true);
 
@@ -178,7 +182,7 @@ void Game::loadLevel(int level) {
 
 void Game::run() {
   setup();
-  while (isRunning) {
+  while (_isRunning) {
     processInput();
     update();
     render();
@@ -191,10 +195,14 @@ void Game::processInput() {
   while (SDL_PollEvent(&event)) {
     switch (event.type) {
       case SDL_QUIT:
-        isRunning = false;
+        _isRunning = false;
         break;
       case SDL_KEYDOWN:
-        if (event.key.keysym.sym == SDLK_ESCAPE) isRunning = false;
+        if (event.key.keysym.sym == SDLK_ESCAPE) _isRunning = false;
+        if (event.key.keysym.sym == SDLK_p) {
+          _isDebug = !_isDebug;
+          Logger::log("Debug colliders render enabled");
+        }
         break;
       default:
         break;
@@ -224,6 +232,10 @@ void Game::render() {
 
   _registry->getSystem<AnimationSystem>().update(_deltaTime);
   _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage);
+
+  if (_isDebug) {
+    _registry->getSystem<DebugColliderSystem>().update(_renderer);
+  }
 
   SDL_RenderPresent(_renderer);
 }
