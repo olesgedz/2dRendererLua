@@ -17,10 +17,12 @@ import assetStorage;
 import transformComponent;
 import rigidBodyComponent;
 import animationComponent;
+import boxColliderComponent;
 
 import renderSystem;
 import movementSystem;
 import animationSystem;
+import collisionSystem;
 
 
 export class Game {
@@ -103,6 +105,8 @@ void Game::loadLevel(int level) {
   _registry->addSystem<MovementSystem>();
   _registry->addSystem<RenderSystem>();
   _registry->addSystem<AnimationSystem>();
+  _registry->addSystem<CollisionSystem>();
+
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -160,15 +164,17 @@ void Game::loadLevel(int level) {
 
   Entity tank = _registry->createEntity();
 
-  tank.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(3.0f, 3.0f), 35.f);
-  tank.addComponent<RigidBodyComponent>(glm::vec2(40.0f, 0.f));
+  tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  tank.addComponent<RigidBodyComponent>(glm::vec2(-30.0f, 0.f));
   tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
+  tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
 
   Entity truck = _registry->createEntity();
 
-  truck.addComponent<TransformComponent>(glm::vec2(10.0f, 50.f), glm::vec2(1.0f, 1.0f), 0.f);
-  truck.addComponent<RigidBodyComponent>(glm::vec2(5.0f, 30.f));
+  truck.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  truck.addComponent<RigidBodyComponent>(glm::vec2(20.0f, 0.f));
   truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
+  truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
 }
 
 void Game::run() {
@@ -207,6 +213,7 @@ void Game::update() {
 
   //Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
+  _registry->getSystem<CollisionSystem>().update();
 
   //Update the registry to process the entities to be added or killed
   _registry->update();
