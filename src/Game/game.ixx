@@ -11,12 +11,17 @@ module;
 
 export module game;
 export import logger;
+import ecs;
+import assetStorage;
+
 import transformComponent;
 import rigidBodyComponent;
-import movementSystem;
-import ecs;
+import animationComponent;
+
 import renderSystem;
-import assetStorage;
+import movementSystem;
+import animationSystem;
+
 
 export class Game {
  public:
@@ -97,11 +102,15 @@ void Game::setup() {
 void Game::loadLevel(int level) {
   _registry->addSystem<MovementSystem>();
   _registry->addSystem<RenderSystem>();
+  _registry->addSystem<AnimationSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
+
   // Load TileMap
   _assetStorage->addTexture("jungle-tilemap", _assetsPath / "tilemaps/jungle.png", _renderer);
+  _assetStorage->addTexture("chopper-spritesheet", _assetsPath / "images/chopper-spritesheet.png", _renderer);
+  _assetStorage->addTexture("radar-spritesheet", _assetsPath / "images/radar.png", _renderer);
 
   // Load the tilemap
   int tileSize = 32;
@@ -128,23 +137,38 @@ void Game::loadLevel(int level) {
       Entity tile = _registry->createEntity();
       tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
                                             glm::vec2(tileScale, tileScale), 0.0);
-      tile.addComponent<SpriteComponent>("jungle-tilemap", glm::vec2(tileSize, tileSize), glm::vec4(0),
+      tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0),
                                          glm::vec2(srcRectX, srcRectY));
     }
   }
+
   mapFile.close();
+
+  // UI
+  Entity radar = _registry->createEntity();
+  radar.addComponent<TransformComponent>(glm::vec2(windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f));
+  radar.addComponent<AnimationComponent>(8, 5, true);
+
+  // Entities
+  Entity chopper = _registry->createEntity();
+
+  chopper.addComponent<TransformComponent>(glm::vec2(100.0f, 100.f), glm::vec2(1.0f, 1.0f), 0.f);
+  chopper.addComponent<RigidBodyComponent>(glm::vec2(0.f, 0.f));
+  chopper.addComponent<SpriteComponent>("chopper-spritesheet", 1, glm::vec2(32.f, 32.f));
+  chopper.addComponent<AnimationComponent>(2, 15, true);
 
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(3.0f, 3.0f), 35.f);
   tank.addComponent<RigidBodyComponent>(glm::vec2(40.0f, 0.f));
-  tank.addComponent<SpriteComponent>("tank-image", glm::vec2(32.f, 32.f));
+  tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
 
   Entity truck = _registry->createEntity();
 
-  truck.addComponent<TransformComponent>(glm::vec2(100.0f, 40.f), glm::vec2(1.0f, 1.0f), 0.f);
+  truck.addComponent<TransformComponent>(glm::vec2(10.0f, 50.f), glm::vec2(1.0f, 1.0f), 0.f);
   truck.addComponent<RigidBodyComponent>(glm::vec2(5.0f, 30.f));
-  truck.addComponent<SpriteComponent>("truck-image", glm::vec2(32.f, 32.f));
+  truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
 }
 
 void Game::run() {
@@ -192,6 +216,7 @@ void Game::render() {
   SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
   SDL_RenderClear(_renderer);
 
+  _registry->getSystem<AnimationSystem>().update(_deltaTime);
   _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage);
 
   SDL_RenderPresent(_renderer);

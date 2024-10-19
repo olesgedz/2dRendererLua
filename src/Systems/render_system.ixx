@@ -1,6 +1,10 @@
 module;
 #include <SDL2/SDL.h>
+
+#include <algorithm>
 #include <memory>
+#include <string>
+#include <vector>
 export module renderSystem;
 
 
@@ -14,7 +18,7 @@ export import spriteComponent;
 export class RenderSystem : public System {
 public:
   RenderSystem();
-  void update(SDL_Renderer* renderer, std::unique_ptr<AssetStorage>& assetStorage) const;
+  void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage) const;
 };
 
 RenderSystem::RenderSystem() : System() {
@@ -22,8 +26,17 @@ RenderSystem::RenderSystem() : System() {
   requireComponent<SpriteComponent>();
 }
 
-void RenderSystem::update(SDL_Renderer* renderer, std::unique_ptr<AssetStorage>& assetStorage) const {
-  for (auto& entity : getSystemEntities()) {
+void RenderSystem::update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage) const {
+  // It returns a vector of entities that have the required components, so
+  // only drawable entities.
+  std::vector<Entity> entities = getSystemEntities();
+
+  // We can sort the entities on add Entity or delete
+  std::ranges::sort(entities, [](Entity& a, Entity& b) {
+    return a.getComponent<SpriteComponent>().zDepth < b.getComponent<SpriteComponent>().zDepth;
+  });
+
+  for (auto& entity : entities) {
     const auto& transform = entity.getComponent<TransformComponent>();
     const auto& sprite = entity.getComponent<SpriteComponent>();
 
