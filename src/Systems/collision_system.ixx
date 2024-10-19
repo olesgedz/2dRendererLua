@@ -58,11 +58,15 @@ public:
 private:
   bool isCollided(Collider& compared, Collider& other) {
     bool collided = false;
-    if (compared.transform.position.x < other.transform.position.x + other.boxCollider.size.x * other.transform.scale.x &&
-        compared.transform.position.x + compared.boxCollider.size.x * compared.transform.scale.x  > other.transform.position.x &&
-        compared.transform.position.y < other.transform.position.y + other.boxCollider.size.y * other.transform.scale.y &&
-        compared.transform.position.y + compared.boxCollider.size.y * compared.transform.scale.y  > other.transform.position.y
-      )
+    if (compared.transform.position.x < other.transform.position.x + other.boxCollider.size.x * other.transform.scale.x
+        &&
+        compared.transform.position.x + compared.boxCollider.size.x * compared.transform.scale.x > other.transform.
+        position.x &&
+        compared.transform.position.y < other.transform.position.y + other.boxCollider.size.y * other.transform.scale.y
+        &&
+        compared.transform.position.y + compared.boxCollider.size.y * compared.transform.scale.y > other.transform.
+        position.y
+    )
       collided = true;
     return collided;
   }

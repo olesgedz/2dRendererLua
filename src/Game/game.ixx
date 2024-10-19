@@ -107,7 +107,6 @@ void Game::loadLevel(int level) {
   _registry->addSystem<AnimationSystem>();
   _registry->addSystem<CollisionSystem>();
 
-
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
 
