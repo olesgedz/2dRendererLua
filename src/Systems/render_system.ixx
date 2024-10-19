@@ -40,14 +40,6 @@ void RenderSystem::update(SDL_Renderer* renderer, const std::unique_ptr<AssetSto
     const auto& transform = entity.getComponent<TransformComponent>();
     const auto& sprite = entity.getComponent<SpriteComponent>();
 
-    // SDL_Rect objRect = {
-    //     static_cast<int>(transform.position.x),
-    //     static_cast<int>(transform.position.y),
-    //     static_cast<int>(sprite.size.x),
-    //     static_cast<int>(sprite.size.y)
-    // };
-    // SDL_SetRenderDrawColor(renderer, sprite.color.r, sprite.color.g, sprite.color.b, sprite.color.a);
-    // SDL_RenderFillRect(renderer, &objRect);
     SDL_Rect srcRect = sprite.srcRect;
 
     SDL_Rect dstRect = {
