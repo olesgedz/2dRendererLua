@@ -48,7 +48,8 @@ public:
         Collider dataOther = {.boxCollider = colliderOther, .transform = transformOther};
 
         if (_checkAABBCollision(dataCompared, dataOther)) {
-          Logger::log(std::to_string(compared.getId()) + " collided with " + std::to_string(other.getId()));
+          Logger::log(
+              "Object :" + std::to_string(compared.getId()) + " collided with " + std::to_string(other.getId()));
         }
       }
     }
