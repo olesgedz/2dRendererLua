@@ -3,14 +3,12 @@ module;
 #include <string>
 #include <glm/glm.hpp>
 
-export module collisionSystem;
+export module systems:collisionSystem;
 
 import ecs;
 import logger;
 
-import boxColliderComponent;
-import transformComponent;
-import rigidBodyComponent;
+import components;
 
 
 export class CollisionSystem : public System {

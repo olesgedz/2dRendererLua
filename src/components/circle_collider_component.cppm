@@ -2,7 +2,7 @@ module;
 
 #include <glm/glm.hpp>
 
-export module circleColliderComponent;
+export module components:circleColliderComponent;
 
 export struct CircleColliderComponent {
   float radius;
