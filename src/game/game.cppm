@@ -14,16 +14,8 @@ export import logger;
 import ecs;
 import assetStorage;
 
-import transformComponent;
-import rigidBodyComponent;
-import animationComponent;
-import boxColliderComponent;
-
-import renderSystem;
-import movementSystem;
-import animationSystem;
-import collisionSystem;
-import debugColliderSystem;
+import components;
+import systems;
 
 export class Game {
  public:
