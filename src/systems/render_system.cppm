@@ -5,15 +5,13 @@ module;
 #include <memory>
 #include <string>
 #include <vector>
-export module renderSystem;
+export module systems:renderSystem;
 
 
-import transformComponent;
-import rigidBodyComponent;
+import components;
 import logger;
 import ecs;
 import assetStorage;
-export import spriteComponent;
 
 export class RenderSystem : public System {
 public:

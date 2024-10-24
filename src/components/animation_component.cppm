@@ -5,7 +5,7 @@ module;
 #include <utility>
 #include <SDL2/SDL.h>
 
-export module animationComponent;
+export module components:animationComponent;
 
 
 export struct AnimationComponent {

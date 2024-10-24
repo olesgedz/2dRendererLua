@@ -3,10 +3,9 @@ module;
 #include <string>
 #include <glm//gtx/string_cast.hpp>
 
-export module movementSystem;
+export module systems:movementSystem;
 
-import transformComponent;
-import rigidBodyComponent;
+import components;
 import logger;
 import ecs;
 

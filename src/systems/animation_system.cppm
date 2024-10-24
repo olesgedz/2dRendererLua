@@ -1,17 +1,13 @@
 module;
 #include <SDL2/SDL.h>
 
-export module animationSystem;
+export module systems:animationSystem;
 import ecs;
-import spriteComponent;
-import animationComponent;
+import components;
 
-/////////////////////////////////////////////////////////////
-///
+
 /// Animation System
 /// Probably can name different frames animation by string.
-///
-/////////////////////////////////////////////////////////////
 
 export class AnimationSystem : public System {
 public:
