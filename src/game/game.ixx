@@ -42,14 +42,17 @@ export class Game {
  private:
   std::unique_ptr<Registry> _registry;
   std::unique_ptr<AssetStorage> _assetStorage;
+  std::unique_ptr<EventBus> _eventBus;
 
   float _millisecondsPreviousFrame = 0.0f;
   float _deltaTime = 0.0f;
 
   SDL_Window* _window;
   SDL_Renderer* _renderer;
+
   bool _isRunning;
   bool _isDebug;
+
   std::filesystem::path _assetsPath = "../assets";
 
   int _windowWidth;
