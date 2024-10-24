@@ -2,7 +2,7 @@ module;
 
 #include <glm/glm.hpp>
 
-export module boxColliderComponent;
+export module components:boxColliderComponent;
 
 export struct BoxColliderComponent {
   glm::vec2 size;

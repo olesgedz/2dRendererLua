@@ -6,14 +6,21 @@ project(${Target})
 
 set(CMAKE_CXX_STANDARD 20)
 
-if(DEFINED ENV{VCPKG_ROOT})
-        set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
-endif()
+if (DEFINED ENV{VCPKG_ROOT})
+    set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
+endif ()
 
 file(GLOB_RECURSE source_files "src/*.cpp")
 file(GLOB_RECURSE header_files "src/*.hpp")
-file(GLOB_RECURSE module_files "src/*.ixx")
-#
+file(GLOB_RECURSE module_files "src/*.cppm")
+file(GLOB_RECURSE module_interface_files "src/*.ixx")
+
+# That is a hack to make sure that all files are in the same list, but target source does not include module files type yet
+set(all_module_files ${module_files} ${module_interface_files})
+message(STATUS "cppm: ${module_files}")
+message(STATUS "inF_module_files: ${module_interface_files}")
+message(STATUS "module_files: ${all_module_files}")
+
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -30,15 +37,15 @@ target_sources(${Target}
         ${source_files}     # Regular source file
         PUBLIC
         FILE_SET modules TYPE CXX_MODULES
-#        BASE_DIRS src
+        #        BASE_DIRS src
         FILES
-        ${module_files}     # Module files
+        ${all_module_files}     # Module files
         PUBLIC
         FILE_SET headers TYPE HEADERS
-#        BASE_DIRS include
+        #        BASE_DIRS include
         FILES
         ${header_files}     # Header files
-        )
+)
 
 message(STATUS "imgui_INCLUDE_DIRS: ${IMGUI_INCLUDE_DIRS}")
 
@@ -48,7 +55,7 @@ target_include_directories(${Target}
         ${SDL2_IMAGE_INCLUDE_DIRS}
         ${SDL2_TTF_INCLUDE_DIRS}
         ${SDL2_MIXER_INCLUDE_DIRS}
-        )
+)
 target_link_libraries(${Target} PRIVATE glm::glm)
 
 target_include_directories(${Target} PRIVATE ${LUA_INCLUDE_DIR})
@@ -57,9 +64,9 @@ target_include_directories(${Target} PRIVATE ${IMGUI_INCLUDE_DIRS})
 target_link_libraries(${Target} PRIVATE ${LUA_LIBRARIES})
 
 target_link_libraries(${Target} PRIVATE
-         imgui::imgui
-        )
-target_link_libraries(${Target} PRIVATE  SDL2::SDL2 SDL2::SDL2main)
+        imgui::imgui
+)
+target_link_libraries(${Target} PRIVATE SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)

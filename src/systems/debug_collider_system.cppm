@@ -5,17 +5,13 @@ module;
 #include <memory>
 #include <string>
 #include <vector>
-export module debugColliderSystem;
+export module systems:debugColliderSystem;
 
 
-import transformComponent;
-import rigidBodyComponent;
+import components;
 import logger;
 import ecs;
 import assetStorage;
-import boxColliderComponent;
-import circleColliderComponent;
-export import spriteComponent;
 
 export class DebugColliderSystem : public System {
 public:
