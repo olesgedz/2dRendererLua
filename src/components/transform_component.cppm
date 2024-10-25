@@ -2,7 +2,7 @@ module;
 
 #include <glm/glm.hpp>
 
-export module components:transformComponent;
+export module components:transform_component;
 
 export struct TransformComponent {
   glm::vec2 position{};

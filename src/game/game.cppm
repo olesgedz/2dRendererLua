@@ -11,9 +11,10 @@ module;
 
 export module game;
 export import logger;
-import ecs;
-import assetStorage;
 
+import ecs;
+import asset_storage;
+import event_bus;
 import components;
 import systems;
 

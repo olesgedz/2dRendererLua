@@ -2,7 +2,7 @@ module;
 
 #include <glm/glm.hpp>
 
-export module components:rigidBodyComponent;
+export module components:rigid_body_component;
 
 export struct RigidBodyComponent {
   glm::vec2 velocity;
