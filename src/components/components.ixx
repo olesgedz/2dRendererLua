@@ -1,10 +1,10 @@
 export module components;
 
-export import :circleColliderComponent;
-export import :rigidBodyComponent;
-export import :boxColliderComponent;
-export import :spriteComponent;
-export import :transformComponent;
-export import :animationComponent;
-export import :rigidBodyComponent;
+export import :circle_collider_component;
+export import :rigid_body_component;
+export import :box_collider_component;
+export import :sprite_component;
+export import :transform_component;
+export import :animation_component;
+export import :rigid_body_component;
 

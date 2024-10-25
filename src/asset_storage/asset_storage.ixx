@@ -7,7 +7,7 @@ module;
 #include <filesystem>
 #include <cassert>
 
-export module assetStorage;
+export module asset_storage;
 import logger;
 
 

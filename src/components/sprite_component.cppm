@@ -5,7 +5,7 @@ module;
 #include <utility>
 #include <SDL2/SDL.h>
 
-export module components:spriteComponent;
+export module components:sprite_component;
 
 export struct SpriteComponent {
   glm::vec2 size;

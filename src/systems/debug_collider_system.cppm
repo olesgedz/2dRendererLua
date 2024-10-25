@@ -5,13 +5,13 @@ module;
 #include <memory>
 #include <string>
 #include <vector>
-export module systems:debugColliderSystem;
+export module systems:debug_collider_system;
 
 
 import components;
 import logger;
 import ecs;
-import assetStorage;
+import asset_storage;
 
 export class DebugColliderSystem : public System {
 public:

@@ -1,7 +1,7 @@
 export module systems;
 
-export import :animationSystem;
-export import :collisionSystem;
-export import :debugColliderSystem;
-export import :movementSystem;
-export import :renderSystem;
+export import :animation_system;
+export import :collision_system;
+export import :debug_collider_system;
+export import :movement_system;
+export import :render_system;
