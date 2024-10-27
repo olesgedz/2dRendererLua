@@ -4,6 +4,7 @@ export module events:collision_event;
 
 import ecs;
 import event_bus;
+import event;
 
 export class CollisionEvent : public Event {
 public:

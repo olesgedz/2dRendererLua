@@ -1,5 +1,6 @@
 module;
 
+#include <memory>
 #include <string>
 #include <glm/glm.hpp>
 
@@ -7,9 +8,9 @@ export module systems:collision_system;
 
 import ecs;
 import logger;
-
 import components;
-
+import event_bus;
+import events;
 
 export class CollisionSystem : public System {
 public:
@@ -23,7 +24,7 @@ public:
     TransformComponent transform;
   };
 
-  void update() {
+  void update(std::unique_ptr<EventBus>& eventBus) {
     auto entities = getSystemEntities();
 
     // interested in
@@ -48,6 +49,7 @@ public:
         if (_checkAABBCollision(dataCompared, dataOther)) {
           Logger::log(
               "Object :" + std::to_string(compared.getId()) + " collided with " + std::to_string(other.getId()));
+          eventBus->emitEvent<CollisionEvent>(compared, other);
         }
       }
     }
