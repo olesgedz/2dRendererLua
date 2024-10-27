@@ -19,9 +19,9 @@ import components;
 import systems;
 
 export class Game {
- public:
+public:
   Game();
- ~Game();
+  ~Game();
 
   void initialize();
   void loadLevel(int level);
@@ -32,7 +32,7 @@ export class Game {
   void render();
   void destroy();
 
- private:
+private:
   std::unique_ptr<Registry> _registry;
   std::unique_ptr<AssetStorage> _assetStorage;
   std::unique_ptr<EventBus> _eventBus;
@@ -60,8 +60,10 @@ Game::Game() {
   _isDebug = false;
 
   _registry = std::make_unique<Registry>();
-        _assetStorage = std::make_unique<AssetStorage>();
-        Logger::log("Game constructor called!");
+  _assetStorage = std::make_unique<AssetStorage>();
+  _eventBus = std::make_unique<EventBus>();
+
+  Logger::log("Game constructor called!");
 }
 
 Game::~Game() {
@@ -106,6 +108,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<AnimationSystem>();
   _registry->addSystem<CollisionSystem>();
   _registry->addSystem<DebugColliderSystem>();
+  _registry->addSystem<DamageSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -213,11 +216,15 @@ void Game::update() {
   _deltaTime = (SDL_GetTicks() - _millisecondsPreviousFrame) / 1000.0f;
 
   _millisecondsPreviousFrame = SDL_GetTicks();
+  // Reset eventbus
+  _eventBus->reset();
+
+  // Subscriptions
+  _registry->getSystem<DamageSystem>().subscribeToEvents(_eventBus);
 
   //Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
-  _registry->getSystem<CollisionSystem>().update();
-
+  _registry->getSystem<CollisionSystem>().update(_eventBus);
   //Update the registry to process the entities to be added or killed
   _registry->update();
 }
