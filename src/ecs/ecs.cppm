@@ -16,7 +16,7 @@ import logger;
 
 export class Registry;
 
-constexpr  size_t MAX_COMPONENTS = 32;
+constexpr size_t MAX_COMPONENTS = 32;
 typedef std::bitset<MAX_COMPONENTS> Signature;
 
 struct BaseComponent {
@@ -53,10 +53,14 @@ public:
   bool operator!=(const Entity& other) const { return _id != other._id; }
 
 
-  template<typename TComponent, typename ...TArgs> void addComponent(TArgs&&... args);
-  template<typename TComponent, typename ...TArgs> void removeComponent();
-  template<typename TComponent, typename ...TArgs> bool hasComponent() const;
-  template<typename TComponent, typename ...TArgs> TComponent& getComponent();
+  template <typename TComponent, typename... TArgs>
+  void addComponent(TArgs&&... args);
+  template <typename TComponent, typename... TArgs>
+  void removeComponent();
+  template <typename TComponent, typename... TArgs>
+  bool hasComponent() const;
+  template <typename TComponent, typename... TArgs>
+  TComponent& getComponent();
 
   class Registry* registry;
 
@@ -78,7 +82,10 @@ public:
 
   void removeEntityFromSystem(Entity entity);
 
-  [[nodiscard]] std::vector<Entity> getSystemEntities() const { return _entities; }
+  [[nodiscard]] std::vector<Entity> getSystemEntities() const {
+    return _entities;
+  }
+
   [[nodiscard]] const Signature& getComponentSignature() const { return _componentSignature; }
 
   template <typename T>
@@ -118,7 +125,8 @@ public:
     _entitiesToBeAdded = std::move(other._entitiesToBeAdded);
     _entitiesToBeKilled = std::move(other._entitiesToBeKilled);
   }
-//copy constructor
+
+  //copy constructor
   Registry(const Registry& other) {
     _numEntities = other._numEntities;
     _componentPools = other._componentPools;
@@ -237,7 +245,7 @@ void Registry::update() {
 void Registry::addEntityToSystem(Entity entity) {
   const auto entityId = entity.getId();
 
-   auto entitySignature = _entityComponentSignatures[entityId];
+  auto entitySignature = _entityComponentSignatures[entityId];
 
   // loop all the systems
   for (auto& system : _systems) {
@@ -271,7 +279,6 @@ void Registry::removeComponent(Entity entity) {
 
   _entityComponentSignatures[entityId].set(componentId, false);
   Logger::log("Component removed from entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
-
 }
 
 template <typename T>
@@ -279,7 +286,7 @@ T& Registry::getComponent(Entity entity) const {
   const auto componentId = Component<T>::getId();
   const auto entityId = entity.getId();
   auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
-  return   componentPool->get(entityId);
+  return componentPool->get(entityId);
 }
 
 
@@ -300,7 +307,7 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   }
 
   // Get the needed component pool
-auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
+  auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
 
   if (entityId >= componentPool->getSize()) {
     componentPool->resize(_numEntities);
@@ -335,7 +342,8 @@ bool Registry::hasSystem() const {
 
 template <typename TSystem>
 TSystem& Registry::getSystem() const {
-  return *std::static_pointer_cast<TSystem>(_systems.at(std::type_index(typeid(TSystem))));
+  auto system = _systems.find(std::type_index(typeid(TSystem)));
+  return *(std::static_pointer_cast<TSystem>(system->second));
 }
 
 /*
@@ -347,24 +355,23 @@ void Entity::kill() {
   registry->killEntity(*this);
 }
 
-template<typename TComponent, typename ...TArgs>
+template <typename TComponent, typename... TArgs>
 void Entity::addComponent(TArgs&&... args) {
   registry->addComponent<TComponent>(*this, std::forward<TArgs>(args)...);
 }
 
-template<typename TComponent, typename ...TArgs>
+template <typename TComponent, typename... TArgs>
 void Entity::removeComponent() {
   registry->removeComponent<TComponent>(*this);
 }
 
-template<typename TComponent, typename ...TArgs>
+template <typename TComponent, typename... TArgs>
 bool Entity::hasComponent() const {
   return registry->hasComponent<TComponent>(*this);
 }
 
-template<typename TComponent, typename ...TArgs>
+template <typename TComponent, typename... TArgs>
 TComponent& Entity::getComponent() {
-
   return registry->getComponent<TComponent>(*this);
 }
 

@@ -3,6 +3,7 @@ module;
 #include <string>
 #include <glm//gtx/string_cast.hpp>
 #include <memory>
+#include <SDL2/SDL_keycode.h>
 
 export module systems:keyboard_control_system;
 
@@ -22,7 +23,8 @@ public:
 };
 
 KeyboardControlSystem::KeyboardControlSystem() : System() {
-  requireComponent<TransformComponent>();
+  // requireComponent<KeyboardControlSystem>();
+  // requireComponent<SpriteComponent>();
   requireComponent<RigidBodyComponent>();
 }
 
@@ -32,9 +34,37 @@ void KeyboardControlSystem::subscribeToEvents(std::unique_ptr<EventBus>& eventBu
 
 
 void KeyboardControlSystem::onKeyPress(KeyPressEvent& event) {
-  std::string keyCode = std::to_string(event.keycode);
-  std::string keySymbol(1, event.keycode);
-  Logger::log("OnKeyPress event keycode: " + keyCode + " Symbol: " + keySymbol);
+  Logger::err("NEXXT:");
+  auto entities = getSystemEntities();
+  // Logger::err("Si11111ze:" + std::to_string(entities.size()));
+  // auto entities = getSystemEntities();
+  // Logger::err("Size:" + entities.size());
+  // for (auto entity : getSystemEntities()) {
+  //   // const auto keyboardControl = entity.getComponent<KeyboardControlledComponent>();
+  //   auto& sprite = entity.getComponent<SpriteComponent>();
+  //   // auto& rigidBody = entity.getComponent<RigidBodyComponent>();
+  //   //
+  //   // switch (event.keycode) {
+  //   //   case SDLK_w:
+  //   //     rigidBody.velocity = keyboardControl.upVelocity;
+  //   //     sprite.srcRect.y = sprite.size.y * 0;
+  //   //     break;
+  //   //   case SDLK_d:
+  //   //     rigidBody.velocity = keyboardControl.rightVelocity;
+  //   //     sprite.srcRect.y = sprite.size.y * 1;
+  //   //     break;
+  //   //   case SDLK_s:
+  //   //     rigidBody.velocity = keyboardControl.downVelocity;
+  //   //     sprite.srcRect.y = sprite.size.y * 2;
+  //   //     break;
+  //   //   case SDLK_a:
+  //   //     rigidBody.velocity = keyboardControl.leftVelocity;
+  //   //     sprite.srcRect.y = sprite.size.y * 3;
+  //   //     break;
+  //   //   default:
+  //   //     break;
+  //   // }
+  // }
 }
 
 void KeyboardControlSystem::update(float deltaTime) const {
@@ -44,4 +74,6 @@ void KeyboardControlSystem::update(float deltaTime) const {
   //
   //   transform.position += rigidBody.velocity * deltaTime;
   // }
+  auto entities = getSystemEntities();
+  Logger::err("Size:" + std::to_string(entities.size()));
 }
