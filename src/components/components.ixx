@@ -7,4 +7,5 @@ export import :sprite_component;
 export import :transform_component;
 export import :animation_component;
 export import :rigid_body_component;
+export import :keyboard_controlled_component;
 
