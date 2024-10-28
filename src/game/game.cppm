@@ -17,6 +17,7 @@ import asset_storage;
 import event_bus;
 import components;
 import systems;
+import events;
 
 export class Game {
 public:
@@ -109,6 +110,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<CollisionSystem>();
   _registry->addSystem<DebugColliderSystem>();
   _registry->addSystem<DamageSystem>();
+  _registry->addSystem<KeyboardControlSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -202,6 +204,7 @@ void Game::processInput() {
           _isDebug = !_isDebug;
           Logger::log("Debug colliders render enabled");
         }
+        _eventBus->emitEvent<KeyPressEvent>(event.key.keysym.sym);
         break;
       default:
         break;
@@ -221,10 +224,12 @@ void Game::update() {
 
   // Subscriptions
   _registry->getSystem<DamageSystem>().subscribeToEvents(_eventBus);
+  _registry->getSystem<KeyboardControlSystem>().subscribeToEvents(_eventBus);
 
   //Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
   _registry->getSystem<CollisionSystem>().update(_eventBus);
+
   //Update the registry to process the entities to be added or killed
   _registry->update();
 }

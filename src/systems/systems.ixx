@@ -6,3 +6,4 @@ export import :debug_collider_system;
 export import :movement_system;
 export import :render_system;
 export import :damage_system;
+export import :keyboard_control_system;
