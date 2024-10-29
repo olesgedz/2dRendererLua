@@ -126,60 +126,60 @@ void Game::loadLevel(int level) {
   int mapNumCols = 25;
   int mapNumRows = 20;
 
-  // std::fstream mapFile;
-  // mapFile.open(_assetsPath / "tilemaps/jungle.map");
-  // if (!mapFile) {
-  //   Logger::err("Failed to open map file");
-  //   return;
-  // }
-  //
-  // for (int y = 0; y < mapNumRows; y++) {
-  //   for (int x = 0; x < mapNumCols; x++) {
-  //     char ch;
-  //     mapFile.get(ch);
-  //     int srcRectY = std::atoi(&ch) * tileSize;
-  //     mapFile.get(ch);
-  //     int srcRectX = std::atoi(&ch) * tileSize;
-  //     mapFile.ignore();
-  //
-  //     Entity tile = _registry->createEntity();
-  //     tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
-  //                                           glm::vec2(tileScale, tileScale), 0.0);
-  //     tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0),
-  //                                        glm::vec2(srcRectX, srcRectY));
-  //   }
-  // }
-  //
-  // mapFile.close();
+  std::fstream mapFile;
+  mapFile.open(_assetsPath / "tilemaps/jungle.map");
+  if (!mapFile) {
+    Logger::err("Failed to open map file");
+    return;
+  }
 
-  // UI
-  // Entity radar = _registry->createEntity();
-  // radar.addComponent<TransformComponent>(glm::vec2(_windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  // radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f));
-  // radar.addComponent<AnimationComponent>(8, 5, true);
+  for (int y = 0; y < mapNumRows; y++) {
+    for (int x = 0; x < mapNumCols; x++) {
+      char ch;
+      mapFile.get(ch);
+      int srcRectY = std::atoi(&ch) * tileSize;
+      mapFile.get(ch);
+      int srcRectX = std::atoi(&ch) * tileSize;
+      mapFile.ignore();
+
+      Entity tile = _registry->createEntity();
+      tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
+                                            glm::vec2(tileScale, tileScale), 0.0);
+      tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0),
+                                         glm::vec2(srcRectX, srcRectY));
+    }
+  }
+
+  mapFile.close();
+
+  //UI
+  Entity radar = _registry->createEntity();
+  radar.addComponent<TransformComponent>(glm::vec2(_windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f));
+  radar.addComponent<AnimationComponent>(8, 5, true);
 
   // Entities
   Entity chopper = _registry->createEntity();
 
   chopper.addComponent<TransformComponent>(glm::vec2(100.0f, 100.f), glm::vec2(1.0f, 1.0f), 0.f);
   chopper.addComponent<RigidBodyComponent>(glm::vec2(0.f, 0.f));
-  // chopper.addComponent<SpriteComponent>("chopper-spritesheet", 1, glm::vec2(32.f, 32.f));
-  // chopper.addComponent<AnimationComponent>(2, 15, true);
-  // chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -20), glm::vec2(20, 0),
-  //                                                   glm::vec2(0, 20), glm::vec2(-20, 0));
-  // Entity tank = _registry->createEntity();
-  //
-  // tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  // tank.addComponent<RigidBodyComponent>(glm::vec2(-30.0f, 0.f));
-  // tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
-  // tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  //
-  // Entity truck = _registry->createEntity();
-  //
-  // truck.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  // truck.addComponent<RigidBodyComponent>(glm::vec2(20.0f, 0.f));
-  // truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
-  // truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
+  chopper.addComponent<SpriteComponent>("chopper-spritesheet", 1, glm::vec2(32.f, 32.f));
+  chopper.addComponent<AnimationComponent>(2, 15, true);
+  chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -20), glm::vec2(20, 0),
+                                                    glm::vec2(0, 20), glm::vec2(-20, 0));
+  Entity tank = _registry->createEntity();
+
+  tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  tank.addComponent<RigidBodyComponent>(glm::vec2(-30.0f, 0.f));
+  tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
+  tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
+
+  Entity truck = _registry->createEntity();
+
+  truck.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  truck.addComponent<RigidBodyComponent>(glm::vec2(20.0f, 0.f));
+  truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
+  truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
 }
 
 void Game::run() {
@@ -222,7 +222,6 @@ void Game::update() {
   _millisecondsPreviousFrame = SDL_GetTicks();
   // Reset eventbus
   _eventBus->reset();
-
   // Subscriptions
   _registry->getSystem<DamageSystem>().subscribeToEvents(_eventBus);
   _registry->getSystem<KeyboardControlSystem>().subscribeToEvents(_eventBus);
@@ -230,7 +229,8 @@ void Game::update() {
   //Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
   _registry->getSystem<CollisionSystem>().update(_eventBus);
-  _registry->getSystem<KeyboardControlSystem>().update(_deltaTime);
+  // _registry->getSystem<KeyboardControlSystem>().update();
+  _registry->getSystem<DamageSystem>().update();
 
   //Update the registry to process the entities to be added or killed
   _registry->update();

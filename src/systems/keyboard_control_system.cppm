@@ -15,65 +15,50 @@ import events;
 
 export class KeyboardControlSystem : public System {
 public:
-  KeyboardControlSystem();
-  void update(float deltaTime) const;
-  void subscribeToEvents(std::unique_ptr<EventBus>& eventBus);
+  KeyboardControlSystem() {
+    requireComponent<SpriteComponent>();
+    requireComponent<RigidBodyComponent>();
+    requireComponent<KeyboardControlledComponent>();
+  }
 
-  void onKeyPress(KeyPressEvent& event);
+  void update() const {
+  }
+
+  void subscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
+    eventBus->subscribeToEvent<KeyPressEvent>(this, &KeyboardControlSystem::onKeyPress);
+  }
+
+  void onKeyPress(KeyPressEvent& event) {
+    for (auto ent : getSystemEntities()) {
+      auto& rigidBody = ent.getComponent<RigidBodyComponent>();
+      rigidBody.velocity = glm::vec2(10, 10);
+    }
+    for (auto entity : getSystemEntities()) {
+      const auto keyboardControl = entity.getComponent<KeyboardControlledComponent>();
+      auto& sprite = entity.getComponent<SpriteComponent>();
+      auto& rigidBody = entity.getComponent<RigidBodyComponent>();
+      rigidBody.velocity = glm::vec2(20, 0);
+
+      switch (event.symbol) {
+        case SDLK_w:
+          rigidBody.velocity = keyboardControl.upVelocity;
+          sprite.srcRect.y = sprite.size.y * 0;
+          break;
+        case SDLK_d:
+          rigidBody.velocity = keyboardControl.rightVelocity;
+          sprite.srcRect.y = sprite.size.y * 1;
+          break;
+        case SDLK_s:
+          rigidBody.velocity = keyboardControl.downVelocity;
+          sprite.srcRect.y = sprite.size.y * 2;
+          break;
+        case SDLK_a:
+          rigidBody.velocity = keyboardControl.leftVelocity;
+          sprite.srcRect.y = sprite.size.y * 3;
+          break;
+        default:
+          break;
+      }
+    }
+  }
 };
-
-KeyboardControlSystem::KeyboardControlSystem() : System() {
-  // requireComponent<KeyboardControlSystem>();
-  // requireComponent<SpriteComponent>();
-  requireComponent<RigidBodyComponent>();
-}
-
-void KeyboardControlSystem::subscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
-  eventBus->subscribeToEvent<KeyPressEvent>(this, &KeyboardControlSystem::onKeyPress);
-}
-
-
-void KeyboardControlSystem::onKeyPress(KeyPressEvent& event) {
-  Logger::err("NEXXT:");
-  auto entities = getSystemEntities();
-  // Logger::err("Si11111ze:" + std::to_string(entities.size()));
-  // auto entities = getSystemEntities();
-  // Logger::err("Size:" + entities.size());
-  // for (auto entity : getSystemEntities()) {
-  //   // const auto keyboardControl = entity.getComponent<KeyboardControlledComponent>();
-  //   auto& sprite = entity.getComponent<SpriteComponent>();
-  //   // auto& rigidBody = entity.getComponent<RigidBodyComponent>();
-  //   //
-  //   // switch (event.keycode) {
-  //   //   case SDLK_w:
-  //   //     rigidBody.velocity = keyboardControl.upVelocity;
-  //   //     sprite.srcRect.y = sprite.size.y * 0;
-  //   //     break;
-  //   //   case SDLK_d:
-  //   //     rigidBody.velocity = keyboardControl.rightVelocity;
-  //   //     sprite.srcRect.y = sprite.size.y * 1;
-  //   //     break;
-  //   //   case SDLK_s:
-  //   //     rigidBody.velocity = keyboardControl.downVelocity;
-  //   //     sprite.srcRect.y = sprite.size.y * 2;
-  //   //     break;
-  //   //   case SDLK_a:
-  //   //     rigidBody.velocity = keyboardControl.leftVelocity;
-  //   //     sprite.srcRect.y = sprite.size.y * 3;
-  //   //     break;
-  //   //   default:
-  //   //     break;
-  //   // }
-  // }
-}
-
-void KeyboardControlSystem::update(float deltaTime) const {
-  // for (auto& entity : getSystemEntities()) {
-  //   auto& transform = entity.getComponent<TransformComponent>();
-  //   const auto& rigidBody = entity.getComponent<RigidBodyComponent>();
-  //
-  //   transform.position += rigidBody.velocity * deltaTime;
-  // }
-  auto entities = getSystemEntities();
-  Logger::err("Size:" + std::to_string(entities.size()));
-}
