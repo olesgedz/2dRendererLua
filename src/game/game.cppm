@@ -19,6 +19,7 @@ import components;
 import systems;
 import events;
 
+
 export class Game {
 public:
   Game();
@@ -43,14 +44,16 @@ private:
 
   SDL_Window* _window;
   SDL_Renderer* _renderer;
+  SDL_Rect _camera;
 
   bool _isRunning;
   bool _isDebug;
 
   std::filesystem::path _assetsPath = "../assets";
 
-  int _windowWidth;
-  int _windowHeight;
+  static int _windowWidth;
+  static int _windowHeight;
+  static glm::vec2 mapSize;
   const int _fps = 60;
   const int _millisecondsPerFrame = 1000 / _fps;
   const bool _uncapFramerate = true;
@@ -111,6 +114,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<DebugColliderSystem>();
   _registry->addSystem<DamageSystem>();
   _registry->addSystem<KeyboardControlSystem>();
+  _registry->addSystem<CameraMovementSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -161,12 +165,15 @@ void Game::loadLevel(int level) {
   // Entities
   Entity chopper = _registry->createEntity();
 
+  float speed = 80.f;
   chopper.addComponent<TransformComponent>(glm::vec2(100.0f, 100.f), glm::vec2(1.0f, 1.0f), 0.f);
   chopper.addComponent<RigidBodyComponent>(glm::vec2(0.f, 0.f));
   chopper.addComponent<SpriteComponent>("chopper-spritesheet", 1, glm::vec2(32.f, 32.f));
   chopper.addComponent<AnimationComponent>(2, 15, true);
-  chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -20), glm::vec2(20, 0),
-                                                    glm::vec2(0, 20), glm::vec2(-20, 0));
+  chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -speed), glm::vec2(speed, 0),
+                                                    glm::vec2(0, speed), glm::vec2(-speed, 0));
+  chopper.addComponent<CameraFollowComponent>();
+
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
@@ -231,6 +238,7 @@ void Game::update() {
   _registry->getSystem<CollisionSystem>().update(_eventBus);
   // _registry->getSystem<KeyboardControlSystem>().update();
   _registry->getSystem<DamageSystem>().update();
+  _registry->getSystem<CameraMovementSystem>().update(_camera);
 
   //Update the registry to process the entities to be added or killed
   _registry->update();
@@ -241,7 +249,7 @@ void Game::render() {
   SDL_RenderClear(_renderer);
 
   _registry->getSystem<AnimationSystem>().update(_deltaTime);
-  _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage);
+  _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage, _camera);
 
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer);
