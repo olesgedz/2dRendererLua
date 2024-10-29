@@ -9,8 +9,8 @@ import event;
 
 export class KeyPressEvent : public Event {
 public:
-  SDL_Keycode keycode;
+  SDL_Keycode symbol;
 
-  explicit KeyPressEvent(SDL_Keycode keycode): keycode(keycode) {
+  KeyPressEvent(SDL_Keycode symbol): symbol(symbol) {
   }
 };

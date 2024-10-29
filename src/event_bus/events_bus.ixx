@@ -24,23 +24,23 @@ private:
 
 template <typename TOwner, typename TEvent>
 class EventCallback : public IEventCallBack {
-public:
-
 private:
   typedef void (TOwner::*CallbackFunction)(TEvent&);
 
   TOwner* ownerInstance;
   CallbackFunction _callbackFunction;
 
-  virtual void _call(Event& event) override {
-    std::invoke(_callbackFunction, ownerInstance, static_cast<TEvent&>(event));
+  virtual void _call(Event& e) override {
+    std::invoke(_callbackFunction, ownerInstance, static_cast<TEvent&>(e));
   }
 
 public:
-  EventCallback(TOwner* eventInstance, CallbackFunction callbackFunction) {
+  EventCallback(TOwner* ownerInstance, CallbackFunction callbackFunction) {
     this->ownerInstance = ownerInstance;
     this->_callbackFunction = callbackFunction;
   }
+
+  virtual ~EventCallback() override = default;
 };
 
 typedef std::list<std::unique_ptr<IEventCallBack>> HandlerList;
@@ -80,7 +80,7 @@ public:
   void emitEvent(TArgs&&... args) {
     auto handlers = _subscribers[typeid(TEvent)].get();
     if (handlers) {
-      for (auto it = handlers->begin(); it != handlers->end(); ++it) {
+      for (auto it = handlers->begin(); it != handlers->end(); it++) {
         auto handler = it->get();
 
         TEvent event(std::forward<TArgs>(args)...);

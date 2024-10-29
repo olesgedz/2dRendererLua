@@ -74,15 +74,26 @@ private:
  */
 
 export class System {
+private:
+  Signature _componentSignature;
+  std::vector<Entity> _entities;
+
 public:
-  System() = default;
+  System() {
+    Logger::err(_entities.size() + "SIZE");
+  };
   ~System() = default;
 
   void addEntity(Entity entity);
 
   void removeEntityFromSystem(Entity entity);
 
-  [[nodiscard]] std::vector<Entity> getSystemEntities() const {
+  std::vector<Entity> getSystemEntities() const {
+    return _entities;
+  }
+
+  std::vector<Entity> printData() const {
+    Logger::log("ADTAT");
     return _entities;
   }
 
@@ -93,10 +104,6 @@ public:
     const auto componentId = Component<T>::getId();
     _componentSignature.set(componentId);
   }
-
-private:
-  Signature _componentSignature;
-  std::vector<Entity> _entities;
 };
 
 void System::addEntity(Entity entity) { _entities.push_back(entity); }
@@ -245,11 +252,11 @@ void Registry::update() {
 void Registry::addEntityToSystem(Entity entity) {
   const auto entityId = entity.getId();
 
-  auto entitySignature = _entityComponentSignatures[entityId];
+  const auto& entitySignature = _entityComponentSignatures[entityId];
 
   // loop all the systems
   for (auto& system : _systems) {
-    const auto systemSignature = system.second->getComponentSignature();
+    const auto& systemSignature = system.second->getComponentSignature();
 
     // Check if the entity signature matches the system signature
     if ((entitySignature & systemSignature) == systemSignature) {
@@ -332,12 +339,13 @@ void Registry::addSystem(TArgs&&... args) {
 
 template <typename TSystem>
 void Registry::removeSystem() {
-  _systems.erase(std::type_index(typeid(TSystem)));
+  auto system = _systems.find(std::type_index(typeid(TSystem)));
+  _systems.erase(system);
 }
 
 template <typename TSystem>
 bool Registry::hasSystem() const {
-  return _systems.contains(std::type_index(typeid(TSystem)));
+  return _systems.find(std::type_index(typeid(TSystem))) != _systems.end();
 }
 
 template <typename TSystem>
