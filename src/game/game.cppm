@@ -18,6 +18,7 @@ import event_bus;
 import components;
 import systems;
 import events;
+import settings;
 
 
 export class Game {
@@ -33,7 +34,7 @@ public:
   void update();
   void render();
   void destroy();
-
+  
 private:
   std::unique_ptr<Registry> _registry;
   std::unique_ptr<AssetStorage> _assetStorage;
@@ -51,9 +52,7 @@ private:
 
   std::filesystem::path _assetsPath = "../assets";
 
-  static int _windowWidth;
-  static int _windowHeight;
-  static glm::vec2 mapSize;
+
   const int _fps = 60;
   const int _millisecondsPerFrame = 1000 / _fps;
   const bool _uncapFramerate = true;
@@ -82,10 +81,11 @@ void Game::initialize() {
   SDL_DisplayMode displayMode;
   SDL_GetCurrentDisplayMode(0, &displayMode);
 
-  _windowWidth = 800;
-  _windowHeight = 600;
+  Settings::windowWidth = 800;
+  Settings::windowHeight = 600;
+  
   // Create a window
-  _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _windowWidth, _windowHeight,
+  _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Settings::windowWidth, Settings::windowHeight,
                              SDL_WINDOW_RESIZABLE);
 
   if (!_window) {
@@ -98,7 +98,11 @@ void Game::initialize() {
     Logger::err("Error creating SDL renderer");
     return;
   }
-
+  _camera.x = 0;
+  _camera.y = 0;
+  _camera.w = Settings::windowWidth;
+  _camera.h = Settings::windowHeight;
+  
   // SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN);
   _isRunning = true;
 }
@@ -126,7 +130,7 @@ void Game::loadLevel(int level) {
 
   // Load the tilemap
   int tileSize = 32;
-  double tileScale = 1.0;
+  double tileScale = 2.0;
   int mapNumCols = 25;
   int mapNumRows = 20;
 
@@ -155,10 +159,12 @@ void Game::loadLevel(int level) {
   }
 
   mapFile.close();
-
+  
+  Settings::mapSize = glm::vec2(mapNumCols * tileSize * tileScale, mapNumRows * tileSize * tileScale);
+  
   //UI
   Entity radar = _registry->createEntity();
-  radar.addComponent<TransformComponent>(glm::vec2(_windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  radar.addComponent<TransformComponent>(glm::vec2(Settings::windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
   radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f));
   radar.addComponent<AnimationComponent>(8, 5, true);
 
@@ -236,7 +242,6 @@ void Game::update() {
   //Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
   _registry->getSystem<CollisionSystem>().update(_eventBus);
-  // _registry->getSystem<KeyboardControlSystem>().update();
   _registry->getSystem<DamageSystem>().update();
   _registry->getSystem<CameraMovementSystem>().update(_camera);
 
