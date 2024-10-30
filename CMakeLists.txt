@@ -49,8 +49,6 @@ target_sources(${Target}
         ${header_files}     # Header files
 )
 
-message(STATUS "imgui_INCLUDE_DIRS: ${IMGUI_INCLUDE_DIRS}")
-
 target_include_directories(${Target}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
         ${SDL2_INCLUDE_DIRS}
@@ -73,7 +71,9 @@ target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_im
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 target_link_libraries(${Target} PRIVATE $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
 target_link_libraries(${Target} PRIVATE sol2)
-## Tests
+
+
+### Tests
 #enable_testing()
 #
 #file(GLOB_RECURSE test_source_files "test/src/*.cpp")
