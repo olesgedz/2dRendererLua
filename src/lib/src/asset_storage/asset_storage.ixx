@@ -1,13 +1,13 @@
 module;
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <unordered_map>
-#include <string>
 #include <filesystem>
-#include <cassert>
+#include <string>
+#include <unordered_map>
 
 export module asset_storage;
+
+
 import logger;
 
 

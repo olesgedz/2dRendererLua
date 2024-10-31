@@ -1,12 +1,10 @@
 module;
 
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL_image.h>
 
 #include <cassert>
-#include <filesystem>
 #include <string>
-#include <unordered_map>
 
 module asset_storage;
 
