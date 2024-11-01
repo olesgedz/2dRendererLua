@@ -16,7 +16,7 @@ import asset_storage;
 export class DebugColliderSystem : public System {
 public:
   DebugColliderSystem();
-  void update(SDL_Renderer* renderer) const;
+  void update(SDL_Renderer* renderer, const SDL_Rect& camera) const;
 
 private:
   void _drawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius) const;
@@ -24,10 +24,10 @@ private:
 
 DebugColliderSystem::DebugColliderSystem() : System() {
   requireComponent<TransformComponent>();
-  // requireComponent<BoxColliderComponent>();
+  requireComponent<BoxColliderComponent>();
 }
 
-void DebugColliderSystem::update(SDL_Renderer* renderer) const {
+void DebugColliderSystem::update(SDL_Renderer* renderer, const SDL_Rect& camera) const {
   // It returns a vector of entities that have the required components, so
   // only drawable entities.
   std::vector<Entity> entities = getSystemEntities();
@@ -44,8 +44,8 @@ void DebugColliderSystem::update(SDL_Renderer* renderer) const {
 
       SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
       SDL_RenderDrawPoint(renderer, transform.position.x, transform.position.y);
-      SDL_Rect rect = SDL_Rect(transform.position.x + collider.offset.x,
-                               transform.position.y + collider.offset.y,
+      SDL_Rect rect = SDL_Rect(transform.position.x + collider.offset.x + camera.x,
+                               transform.position.y + collider.offset.y + camera.y,
                                collider.size.x * transform.scale.x,
                                collider.size.y * transform.scale.y);
       SDL_RenderDrawRect(renderer, &rect);

@@ -34,7 +34,7 @@ public:
   void update();
   void render();
   void destroy();
-  
+
 private:
   std::unique_ptr<Registry> _registry;
   std::unique_ptr<AssetStorage> _assetStorage;
@@ -83,9 +83,10 @@ void Game::initialize() {
 
   Settings::windowWidth = 800;
   Settings::windowHeight = 600;
-  
+
   // Create a window
-  _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Settings::windowWidth, Settings::windowHeight,
+  _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Settings::windowWidth,
+                             Settings::windowHeight,
                              SDL_WINDOW_RESIZABLE);
 
   if (!_window) {
@@ -102,7 +103,7 @@ void Game::initialize() {
   _camera.y = 0;
   _camera.w = Settings::windowWidth;
   _camera.h = Settings::windowHeight;
-  
+
   // SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN);
   _isRunning = true;
 }
@@ -119,6 +120,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<DamageSystem>();
   _registry->addSystem<KeyboardControlSystem>();
   _registry->addSystem<CameraMovementSystem>();
+  _registry->addSystem<ProjectileEmitSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -127,6 +129,7 @@ void Game::loadLevel(int level) {
   _assetStorage->addTexture("jungle-tilemap", _assetsPath / "tilemaps/jungle.png", _renderer);
   _assetStorage->addTexture("chopper-spritesheet", _assetsPath / "images/chopper-spritesheet.png", _renderer);
   _assetStorage->addTexture("radar-spritesheet", _assetsPath / "images/radar.png", _renderer);
+  _assetStorage->addTexture("bullet-image", _assetsPath / "images/bullet.png", _renderer);
 
   // Load the tilemap
   int tileSize = 32;
@@ -153,19 +156,19 @@ void Game::loadLevel(int level) {
       Entity tile = _registry->createEntity();
       tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
                                             glm::vec2(tileScale, tileScale), 0.0);
-      tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0),
+      tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0), false,
                                          glm::vec2(srcRectX, srcRectY));
     }
   }
 
   mapFile.close();
-  
+
   Settings::mapSize = glm::vec2(mapNumCols * tileSize * tileScale, mapNumRows * tileSize * tileScale);
-  
+
   //UI
   Entity radar = _registry->createEntity();
   radar.addComponent<TransformComponent>(glm::vec2(Settings::windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f));
+  radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f), glm::vec4(0), true);
   radar.addComponent<AnimationComponent>(8, 5, true);
 
   // Entities
@@ -183,16 +186,19 @@ void Game::loadLevel(int level) {
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  tank.addComponent<RigidBodyComponent>(glm::vec2(-30.0f, 0.f));
+  tank.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
   tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
+  tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 0, false);
 
   Entity truck = _registry->createEntity();
 
   truck.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  truck.addComponent<RigidBodyComponent>(glm::vec2(20.0f, 0.f));
+  truck.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
   truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
+  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 0, false
+      );
 }
 
 void Game::run() {
@@ -216,7 +222,11 @@ void Game::processInput() {
         if (event.key.keysym.sym == SDLK_ESCAPE) _isRunning = false;
         if (event.key.keysym.sym == SDLK_p) {
           _isDebug = !_isDebug;
-          Logger::log("Debug colliders render enabled");
+          if (_isDebug) {
+            Logger::log("Debug colliders render enabled");
+          } else {
+            Logger::log("Debug colliders render disabled");
+          }
         }
         _eventBus->emitEvent<KeyPressEvent>(event.key.keysym.sym);
         break;
@@ -233,20 +243,23 @@ void Game::update() {
   _deltaTime = (SDL_GetTicks() - _millisecondsPreviousFrame) / 1000.0f;
 
   _millisecondsPreviousFrame = SDL_GetTicks();
+
   // Reset eventbus
   _eventBus->reset();
+
   // Subscriptions
   _registry->getSystem<DamageSystem>().subscribeToEvents(_eventBus);
   _registry->getSystem<KeyboardControlSystem>().subscribeToEvents(_eventBus);
+
+  //Update the registry to process the entities to be added or killed
+  _registry->update();
 
   //Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
   _registry->getSystem<CollisionSystem>().update(_eventBus);
   _registry->getSystem<DamageSystem>().update();
   _registry->getSystem<CameraMovementSystem>().update(_camera);
-
-  //Update the registry to process the entities to be added or killed
-  _registry->update();
+  _registry->getSystem<ProjectileEmitSystem>().update(_registry);
 }
 
 void Game::render() {
@@ -257,7 +270,7 @@ void Game::render() {
   _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage, _camera);
 
   if (_isDebug) {
-    _registry->getSystem<DebugColliderSystem>().update(_renderer);
+    _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);
   }
 
   SDL_RenderPresent(_renderer);

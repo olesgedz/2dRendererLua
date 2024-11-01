@@ -1,6 +1,7 @@
 module;
 #include <SDL2/SDL.h>
 
+#include <glm/glm.hpp>
 #include <algorithm>
 #include <memory>
 #include <string>
@@ -16,7 +17,7 @@ import asset_storage;
 export class RenderSystem : public System {
 public:
   RenderSystem();
-  void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage, SDL_Rect& camera) const;
+  void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
 };
 
 RenderSystem::RenderSystem() : System() {
@@ -26,7 +27,7 @@ RenderSystem::RenderSystem() : System() {
 
 void RenderSystem::update(SDL_Renderer* renderer,
                           const std::unique_ptr<AssetStorage>& assetStorage,
-                          SDL_Rect& camera) const {
+                          const SDL_Rect& camera) const {
   // It returns a vector of entities that have the required components, so
   // only drawable entities.
   std::vector<Entity> entities = getSystemEntities();
@@ -41,10 +42,15 @@ void RenderSystem::update(SDL_Renderer* renderer,
     const auto& sprite = entity.getComponent<SpriteComponent>();
 
     SDL_Rect srcRect = sprite.srcRect;
+    glm::vec2 shift = glm::vec2(0);
+
+    if (!sprite.isFixed) {
+      shift = glm::vec2(camera.x, camera.y);
+    }
 
     SDL_Rect dstRect = {
-        static_cast<int>(transform.position.x - camera.x),
-        static_cast<int>(transform.position.y - camera.y),
+        static_cast<int>(transform.position.x - shift.x),
+        static_cast<int>(transform.position.y - shift.y),
         static_cast<int>(sprite.size.x * transform.scale.x),
         static_cast<int>(sprite.size.y * transform.scale.y)
     };
