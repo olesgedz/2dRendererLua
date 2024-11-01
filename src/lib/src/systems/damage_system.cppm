@@ -26,8 +26,8 @@ public:
     Logger::log(
         "Damage system received an event Collision between entites: " + std::to_string(event.a.getId()) + " and " +
         std::to_string(event.b.getId()));
-    event.a.kill();
-    event.b.kill();
+    // event.a.kill();
+    // event.b.kill();
   }
 
   void update() {
