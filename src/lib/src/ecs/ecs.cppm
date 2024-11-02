@@ -92,10 +92,6 @@ public:
     return _entities;
   }
 
-  std::vector<Entity> printData() const {
-    Logger::log("ADTAT");
-    return _entities;
-  }
 
   [[nodiscard]] const Signature& getComponentSignature() const { return _componentSignature; }
 

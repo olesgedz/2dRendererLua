@@ -10,4 +10,6 @@ export import :rigid_body_component;
 export import :keyboard_controlled_component;
 export import :camera_follow_component;
 export import :projectile_emitter_component;
+export import :health_component;
+export import :projectile_component;
 
