@@ -121,6 +121,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<KeyboardControlSystem>();
   _registry->addSystem<CameraMovementSystem>();
   _registry->addSystem<ProjectileEmitSystem>();
+  _registry->addSystem<ProjectileLifecycleSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -182,6 +183,7 @@ void Game::loadLevel(int level) {
   chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -speed), glm::vec2(speed, 0),
                                                     glm::vec2(0, speed), glm::vec2(-speed, 0));
   chopper.addComponent<CameraFollowComponent>();
+  chopper.addComponent<HealthComponent>(100);
 
   Entity tank = _registry->createEntity();
 
@@ -190,6 +192,7 @@ void Game::loadLevel(int level) {
   tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
   tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
   tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 0, false);
+  tank.addComponent<HealthComponent>(100);
 
   Entity truck = _registry->createEntity();
 
@@ -197,8 +200,8 @@ void Game::loadLevel(int level) {
   truck.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
   truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 0, false
-      );
+  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 0, false);
+  tank.addComponent<HealthComponent>(100);
 }
 
 void Game::run() {
@@ -260,6 +263,7 @@ void Game::update() {
   _registry->getSystem<DamageSystem>().update();
   _registry->getSystem<CameraMovementSystem>().update(_camera);
   _registry->getSystem<ProjectileEmitSystem>().update(_registry);
+  _registry->getSystem<ProjectileLifecycleSystem>().update();
 }
 
 void Game::render() {
