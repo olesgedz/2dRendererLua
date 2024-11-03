@@ -184,6 +184,7 @@ void Game::loadLevel(int level) {
                                                     glm::vec2(0, speed), glm::vec2(-speed, 0));
   chopper.addComponent<CameraFollowComponent>();
   chopper.addComponent<HealthComponent>(100);
+  chopper.addComponent<ProjectileEmitterComponent>(glm::vec2(150.f, 150.f), 0, 1000, 10, true);
 
   Entity tank = _registry->createEntity();
 
@@ -253,6 +254,7 @@ void Game::update() {
   // Subscriptions
   _registry->getSystem<DamageSystem>().subscribeToEvents(_eventBus);
   _registry->getSystem<KeyboardControlSystem>().subscribeToEvents(_eventBus);
+  _registry->getSystem<ProjectileEmitSystem>().subscribeToEvents(_eventBus);
 
   //Update the registry to process the entities to be added or killed
   _registry->update();
