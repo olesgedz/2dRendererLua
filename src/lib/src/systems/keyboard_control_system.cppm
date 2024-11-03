@@ -29,15 +29,10 @@ public:
   }
 
   void onKeyPress(KeyPressEvent& event) {
-    for (auto ent : getSystemEntities()) {
-      auto& rigidBody = ent.getComponent<RigidBodyComponent>();
-      rigidBody.velocity = glm::vec2(10, 10);
-    }
     for (auto entity : getSystemEntities()) {
       const auto keyboardControl = entity.getComponent<KeyboardControlledComponent>();
       auto& sprite = entity.getComponent<SpriteComponent>();
       auto& rigidBody = entity.getComponent<RigidBodyComponent>();
-      rigidBody.velocity = glm::vec2(20, 0);
 
       switch (event.symbol) {
         case SDLK_w:
