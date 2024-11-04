@@ -195,6 +195,13 @@ private:
 
   std::set<Entity> _entitiesToBeAdded;
   std::set<Entity> _entitiesToBeKilled;
+
+  // Entity tags (one tag name per entity)
+  std::unordered_map<std::string, Entity> entityPerTag;
+  std::unordered_map<int, std::string> tagPerEntity;
+
+  // Entity groups (a set of entities pre group name)
+  std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
 };
 
 Entity Registry::createEntity() {
