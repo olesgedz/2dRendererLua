@@ -202,6 +202,7 @@ private:
 
   // Entity groups (a set of entities pre group name)
   std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
+  std::unordered_map<int, std::string> groupPerEntity;
 };
 
 Entity Registry::createEntity() {
