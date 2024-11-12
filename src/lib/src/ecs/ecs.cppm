@@ -44,6 +44,12 @@ public:
 
   Entity& operator=(const Entity& other) = default;
 
+
+  void tag(const std::string& tag);
+  bool hasTag(const std::string& tag) const;
+  void group(const std::string& group);
+  bool belongsToGroup(const std::string& group) const;
+
   size_t getId() const { return _id; }
   void kill();
 
@@ -176,6 +182,16 @@ public:
   void addEntityToSystem(Entity entity);
   void removeEntityFromSystems(Entity entity);
 
+  // Tag managment
+  void tagEntity(Entity entity, const std::string& tag);
+  bool entityHasTag(Entity entity, const std::string& tag) const;
+
+  // Group managment
+  void groupEntity(Entity entity, const std::string& group);
+  bool entityBelongsToGroup(Entity entity, const std::string& group) const;
+  std::vector<Entity> getEntitiesByGroup(const std::string& group) const;
+  void removeEntityFromGroup(Entity entity);
+
 private:
   // Keeps track number of the entities
   int _numEntities = 0;
@@ -204,6 +220,27 @@ private:
   std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
   std::unordered_map<int, std::string> groupPerEntity;
 };
+
+// Tag management
+void Registry::tagEntity(Entity entity, const std::string& tag) {
+}
+
+bool Registry::entityHasTag(Entity entity, const std::string& tag) const {
+}
+
+// Group management
+void Registry::groupEntity(Entity entity, const std::string& group) {
+}
+
+bool Registry::entityBelongsToGroup(Entity entity, const std::string& group) const {
+}
+
+std::vector<Entity> Registry::getEntitiesByGroup(const std::string& group) const {
+}
+
+void Registry::removeEntityFromGroup(Entity entity) {
+}
+
 
 Entity Registry::createEntity() {
   size_t entityId;
@@ -387,3 +424,15 @@ TComponent& Entity::getComponent() {
   return registry->getComponent<TComponent>(*this);
 }
 
+
+void Entity::tag(const std::string& tag) {
+}
+
+bool Entity::hasTag(const std::string& tag) const {
+}
+
+void Entity::group(const std::string& group) {
+}
+
+bool Entity::belongsToGroup(const std::string& group) const {
+}
