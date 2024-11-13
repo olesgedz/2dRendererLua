@@ -108,12 +108,6 @@ public:
   }
 };
 
-void System::addEntity(Entity entity) { _entities.push_back(entity); }
-
-void System::removeEntityFromSystem(Entity entity) {
-  std::erase_if(_entities, [&entity](const Entity& other) { return other == entity; });
-}
-
 ////////////////////////////////////////////////////////////////////////////////////////
 // Registry
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -126,24 +120,10 @@ public:
 
 
   //Move constructor
-  Registry(Registry&& other) noexcept {
-    _numEntities = other._numEntities;
-    _componentPools = std::move(other._componentPools);
-    _entityComponentSignatures = std::move(other._entityComponentSignatures);
-    _systems = std::move(other._systems);
-    _entitiesToBeAdded = std::move(other._entitiesToBeAdded);
-    _entitiesToBeKilled = std::move(other._entitiesToBeKilled);
-  }
+  Registry(Registry&& other) noexcept;
 
   //copy constructor
-  Registry(const Registry& other) {
-    _numEntities = other._numEntities;
-    _componentPools = other._componentPools;
-    _entityComponentSignatures = other._entityComponentSignatures;
-    _systems = other._systems;
-    _entitiesToBeAdded = other._entitiesToBeAdded;
-    _entitiesToBeKilled = other._entitiesToBeKilled;
-  }
+  Registry(const Registry& other);
 
   void update();
 
@@ -185,6 +165,7 @@ public:
   // Tag managment
   void tagEntity(Entity entity, const std::string& tag);
   bool entityHasTag(Entity entity, const std::string& tag) const;
+  void removeEntityTag(Entity entity);
 
   // Group managment
   void groupEntity(Entity entity, const std::string& group);
@@ -221,96 +202,6 @@ private:
   std::unordered_map<int, std::string> groupPerEntity;
 };
 
-// Tag management
-void Registry::tagEntity(Entity entity, const std::string& tag) {
-}
-
-bool Registry::entityHasTag(Entity entity, const std::string& tag) const {
-}
-
-// Group management
-void Registry::groupEntity(Entity entity, const std::string& group) {
-}
-
-bool Registry::entityBelongsToGroup(Entity entity, const std::string& group) const {
-}
-
-std::vector<Entity> Registry::getEntitiesByGroup(const std::string& group) const {
-}
-
-void Registry::removeEntityFromGroup(Entity entity) {
-}
-
-
-Entity Registry::createEntity() {
-  size_t entityId;
-  if (_freedIds.empty()) {
-    entityId = _numEntities++;
-
-    if (entityId >= _entityComponentSignatures.size()) {
-      _entityComponentSignatures.resize(entityId + 1);
-    }
-  } else {
-    entityId = _freedIds.front();
-    _freedIds.pop_front();
-  }
-
-  Entity entity(entityId);
-  entity.registry = this;
-  _entitiesToBeAdded.insert(entity);
-  if (entityId >= _entityComponentSignatures.size()) {
-    _entityComponentSignatures.resize(entityId + 1);
-  }
-
-  Logger::log("Entity created with id: " + std::to_string(entityId));
-
-  return entity;
-}
-
-void Registry::killEntity(Entity entity) {
-  _entitiesToBeKilled.insert(entity);
-}
-
-
-void Registry::update() {
-  // Actually add/remove  the entities between frames
-  for (const auto& entity : _entitiesToBeAdded) {
-    addEntityToSystem(entity);
-    Logger::log("Entity added to system: " + std::to_string(entity.getId()));
-  }
-  _entitiesToBeAdded.clear();
-
-  for (auto entity : _entitiesToBeKilled) {
-    removeEntityFromSystems(entity);
-
-    _entityComponentSignatures[entity.getId()].reset();
-    // add to freed ids
-    _freedIds.push_back(entity.getId());
-  }
-  _entitiesToBeKilled.clear();
-}
-
-void Registry::addEntityToSystem(Entity entity) {
-  const auto entityId = entity.getId();
-
-  const auto& entitySignature = _entityComponentSignatures[entityId];
-
-  // loop all the systems
-  for (auto& system : _systems) {
-    const auto& systemSignature = system.second->getComponentSignature();
-
-    // Check if the entity signature matches the system signature
-    if ((entitySignature & systemSignature) == systemSignature) {
-      system.second->addEntity(entity);
-    }
-  }
-}
-
-void Registry::removeEntityFromSystems(Entity entity) {
-  for (auto& system : _systems) {
-    system.second->removeEntityFromSystem(entity);
-  }
-}
 
 template <typename T>
 bool Registry::hasComponent(Entity entity) const {
@@ -400,9 +291,6 @@ TSystem& Registry::getSystem() const {
  * TODO: Move to separate file or move up?
  */
 
-void Entity::kill() {
-  registry->killEntity(*this);
-}
 
 template <typename TComponent, typename... TArgs>
 void Entity::addComponent(TArgs&&... args) {
@@ -422,17 +310,4 @@ bool Entity::hasComponent() const {
 template <typename TComponent, typename... TArgs>
 TComponent& Entity::getComponent() {
   return registry->getComponent<TComponent>(*this);
-}
-
-
-void Entity::tag(const std::string& tag) {
-}
-
-bool Entity::hasTag(const std::string& tag) const {
-}
-
-void Entity::group(const std::string& group) {
-}
-
-bool Entity::belongsToGroup(const std::string& group) const {
 }
