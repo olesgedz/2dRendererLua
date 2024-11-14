@@ -49,11 +49,6 @@ jobs:
         shell: bash
         run: |
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
-      - name: Install ninja-build on Linux
-        if: matrix.os == 'ubuntu-latest' && matrix.generator == 'Ninja'
-        run: |
-          sudo apt-get update
-          sudo apt-get install ninja-build
       - name: Setup vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git &&
