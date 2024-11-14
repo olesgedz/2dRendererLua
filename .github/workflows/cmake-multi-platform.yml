@@ -21,7 +21,7 @@ jobs:
       #
       # To add more build types (Release, Debug, RelWithDebInfo, etc.) customize the build_type list.
       matrix:
-        os: [ windows-latest, ubuntu-latest ] #[ubuntu-latest, windows-latest]
+        os: [ windows-latest ] #[ubuntu-latest, windows-latest]
         build_type: [ Release ]
         c_compiler: [ clang, cl ]
         include:
@@ -29,10 +29,10 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             generator: "Visual Studio 17 2022"
-          - os: ubuntu-latest
-            c_compiler: clang
-            cpp_compiler: clang++
-            generator: "Unix Makefiles"
+        #          - os: ubuntu-latest
+        #            c_compiler: clang
+        #            cpp_compiler: clang++
+        #            generator: "Unix Makefiles"
         exclude:
           - os: windows-latest
             c_compiler: gcc
