@@ -4,6 +4,7 @@ module;
 #include <map>
 #include <memory>
 #include <typeindex>
+#include <functional>
 
 export module event_bus;
 import logger;

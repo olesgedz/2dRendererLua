@@ -108,11 +108,11 @@ public:
   }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////
+//
 // Registry
-////////////////////////////////////////////////////////////////////////////////////////
+//
 // The registry class is responsible for creating entities and managing the component pools.
-////////////////////////////////////////////////////////////////////////////////////////
+//
 
 export class Registry {
 public:
@@ -166,12 +166,14 @@ public:
   void tagEntity(Entity entity, const std::string& tag);
   bool entityHasTag(Entity entity, const std::string& tag) const;
   void removeEntityTag(Entity entity);
+  Entity getEntityByTag(const std::string& tag) const;
 
   // Group managment
   void groupEntity(Entity entity, const std::string& group);
   bool entityBelongsToGroup(Entity entity, const std::string& group) const;
   std::vector<Entity> getEntitiesByGroup(const std::string& group) const;
   void removeEntityFromGroup(Entity entity);
+  size_t getNumEntities() const { return _numEntities; }
 
 private:
   // Keeps track number of the entities

@@ -70,27 +70,3 @@ target_link_libraries(${Target} PUBLIC $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_ima
 target_link_libraries(${Target} PUBLIC $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 target_link_libraries(${Target} PUBLIC $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
 target_link_libraries(${Target} PUBLIC sol2)
-
-
-### Tests
-#enable_testing()
-#
-#file(GLOB_RECURSE test_source_files "test/src/*.cpp")
-#file(GLOB_RECURSE test_header_files "test/src/*.h")
-#find_package(GTest CONFIG REQUIRED)
-#
-#add_executable(app_test ${test_source_files} ${test_header_files})
-#
-#target_link_libraries(
-#        app_test
-#        PRIVATE
-#        AppLib
-#        GTest::gtest_main
-#)
-#
-#target_include_directories(app_test
-#        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/
-#)
-#
-#include(GoogleTest)
-#gtest_discover_tests(app_test)
