@@ -45,7 +45,12 @@ void Registry::tagEntity(Entity entity, const std::string& tag) {
   tagPerEntity.emplace(entity.getId(), tag);
 }
 
-bool Registry::entityHasTag(Entity entity, const std::string& tag) const { return true; }
+bool Registry::entityHasTag(Entity entity, const std::string& tag) const {
+  if (tagPerEntity.find(entity.getId()) == tagPerEntity.end()) {
+    return false;
+  }
+  return entityPerTag.find(tag)->second == entity;
+}
 
 void Registry::removeEntityTag(Entity entity) {
   auto taggedEntity = tagPerEntity.find(entity.getId());
@@ -55,6 +60,8 @@ void Registry::removeEntityTag(Entity entity) {
     tagPerEntity.erase(taggedEntity);
   }
 }
+
+Entity Registry::getEntityByTag(const std::string& tag) const { return entityPerTag.at(tag); }
 
 // Group management
 void Registry::groupEntity(Entity entity, const std::string& group) {
@@ -80,8 +87,8 @@ void Registry::removeEntityFromGroup(Entity entity) {
     if (group != entitiesPerGroup.end()) {
       group->second.erase(entity);
     }
+    groupPerEntity.erase(groupedEntity);
   }
-  groupPerEntity.erase(groupedEntity);
 }
 
 Entity Registry::createEntity() {
@@ -117,7 +124,7 @@ void Registry::update() {
     addEntityToSystem(entity);
     Logger::log("Entity added to system: " + std::to_string(entity.getId()));
   }
-  _entitiesToBeAdded.clear();
+  if (!_entitiesToBeAdded.empty()) _entitiesToBeAdded.clear();
 
   for (auto entity : _entitiesToBeKilled) {
     removeEntityFromSystems(entity);
@@ -125,8 +132,11 @@ void Registry::update() {
     _entityComponentSignatures[entity.getId()].reset();
     // add to freed ids
     _freedIds.push_back(entity.getId());
+
+    removeEntityTag(entity);
+    removeEntityFromGroup(entity);
   }
-  _entitiesToBeKilled.clear();
+  if (!_entitiesToBeKilled.empty()) _entitiesToBeKilled.clear();
 }
 
 void Registry::addEntityToSystem(Entity entity) {

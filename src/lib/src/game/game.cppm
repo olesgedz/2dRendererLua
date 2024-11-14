@@ -159,6 +159,7 @@ void Game::loadLevel(int level) {
                                             glm::vec2(tileScale, tileScale), 0.0);
       tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0), false,
                                          glm::vec2(srcRectX, srcRectY));
+      tile.group("tiles");
     }
   }
 
@@ -185,6 +186,7 @@ void Game::loadLevel(int level) {
   chopper.addComponent<CameraFollowComponent>();
   chopper.addComponent<HealthComponent>(100);
   chopper.addComponent<ProjectileEmitterComponent>(glm::vec2(150.f, 150.f), 0, 1000, 10, true);
+  chopper.tag("player");
 
   Entity tank = _registry->createEntity();
 
@@ -194,6 +196,7 @@ void Game::loadLevel(int level) {
   tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
   tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 0, false);
   tank.addComponent<HealthComponent>(100);
+  tank.group("enemies");
 
   Entity truck = _registry->createEntity();
 
