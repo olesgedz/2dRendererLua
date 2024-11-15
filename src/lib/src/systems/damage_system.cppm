@@ -26,10 +26,54 @@ public:
     Logger::log(
         "Damage system received an event Collision between entites: " + std::to_string(event.a.getId()) + " and " +
         std::to_string(event.b.getId()));
-    // event.a.kill();
-    // event.b.kill();
+    Entity a = event.a;
+    Entity b = event.b;
+
+    if (a.belongsToGroup("projectiles") && b.hasTag("player")) {
+      onProjectileHitsPlayer(a, b);
+    }
+
+    if (b.belongsToGroup("projectiles") && a.hasTag("player")) {
+      onProjectileHitsPlayer(b, a);
+    }
+
+    if (a.belongsToGroup("projectiles") && b.belongsToGroup("enemies")) {
+      onProjectileHitsEnemy(a, b);
+    }
+
+    if (b.belongsToGroup("projectiles") && a.belongsToGroup("enemies")) {
+      onProjectileHitsEnemy(b, a);
+    }
   }
 
   void update() {
+  }
+
+  void onProjectileHitsPlayer(Entity projectile, Entity player) {
+    const auto projectileComponent = projectile.getComponent<ProjectileComponent>();
+    auto& healthComponent = player.getComponent<HealthComponent>();
+
+    if (!projectileComponent.isFriendly) {
+      healthComponent.healthPrecentage -= projectileComponent.hitPercentDamage;
+      Logger::log("Player health: " + std::to_string(healthComponent.healthPrecentage));
+      projectile.kill();
+    }
+    if (healthComponent.healthPrecentage <= 0) {
+      player.kill();
+    }
+  }
+
+  void onProjectileHitsEnemy(Entity projectile, Entity enemy) {
+    const auto projectileComponent = projectile.getComponent<ProjectileComponent>();
+    auto& healthComponent = enemy.getComponent<HealthComponent>();
+
+    if (projectileComponent.isFriendly) {
+      healthComponent.healthPrecentage -= projectileComponent.hitPercentDamage;
+      Logger::log("Enemy health: " + std::to_string(healthComponent.healthPrecentage));
+      projectile.kill();
+    }
+    if (healthComponent.healthPrecentage <= 0) {
+      enemy.kill();
+    }
   }
 };

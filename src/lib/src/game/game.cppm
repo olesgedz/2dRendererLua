@@ -183,9 +183,11 @@ void Game::loadLevel(int level) {
   chopper.addComponent<AnimationComponent>(2, 15, true);
   chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -speed), glm::vec2(speed, 0),
                                                     glm::vec2(0, speed), glm::vec2(-speed, 0));
+  chopper.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
   chopper.addComponent<CameraFollowComponent>();
   chopper.addComponent<HealthComponent>(100);
   chopper.addComponent<ProjectileEmitterComponent>(glm::vec2(150.f, 150.f), 0, 1000, 10, true);
+
   chopper.tag("player");
 
   Entity tank = _registry->createEntity();
@@ -194,7 +196,7 @@ void Game::loadLevel(int level) {
   tank.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
   tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 0, false);
+  tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 10, false);
   tank.addComponent<HealthComponent>(100);
   tank.group("enemies");
 
@@ -204,8 +206,9 @@ void Game::loadLevel(int level) {
   truck.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
   truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 0, false);
-  tank.addComponent<HealthComponent>(100);
+  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 10, false);
+  truck.addComponent<HealthComponent>(100);
+  truck.group("enemies");
 }
 
 void Game::run() {

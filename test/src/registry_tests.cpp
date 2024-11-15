@@ -1,3 +1,5 @@
+#include <deque>
+
 #include "gtest/gtest.h"
 
 import ecs;
@@ -33,6 +35,15 @@ TEST(Registry, AddTag) {
   auto entity = registry->createEntity();
   entity.tag("test_tag");
   EXPECT_EQ(entity.hasTag("test_tag"), true);
+}
+
+TEST(Registry, HasATagNoTagError) {
+  // Add entity
+  auto registry = std::make_unique<Registry>();
+  auto entity = registry->createEntity();
+  entity.tag("test_tag");
+  EXPECT_EQ(entity.hasTag("test_tag"), true);
+  EXPECT_EQ(entity.hasTag("test_tag_another"), false);
 }
 
 TEST(Registry, RemoveTag) {

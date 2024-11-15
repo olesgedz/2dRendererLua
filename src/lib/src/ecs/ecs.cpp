@@ -3,6 +3,7 @@ module;
 #include <algorithm>
 #include <bitset>
 #include <deque>
+#include <format>
 #include <memory>
 #include <set>
 #include <string>
@@ -49,6 +50,10 @@ bool Registry::entityHasTag(Entity entity, const std::string& tag) const {
   if (tagPerEntity.find(entity.getId()) == tagPerEntity.end()) {
     return false;
   }
+
+  if (entityPerTag.find(tag) == entityPerTag.end()) {
+    return false;
+  }
   return entityPerTag.find(tag)->second == entity;
 }
 
@@ -71,6 +76,9 @@ void Registry::groupEntity(Entity entity, const std::string& group) {
 }
 
 bool Registry::entityBelongsToGroup(Entity entity, const std::string& group) const {
+  if (!entitiesPerGroup.contains(group)) {
+    return false;
+  }
   auto groupEntities = entitiesPerGroup.at(group);
   return groupEntities.find(entity.getId()) != groupEntities.end();
 }
