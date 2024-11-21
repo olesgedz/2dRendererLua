@@ -136,8 +136,16 @@ void Registry::update() {
 
   for (auto entity : _entitiesToBeKilled) {
     removeEntityFromSystems(entity);
-
+    Logger::log("Entity removed from system: " + std::to_string(entity.getId()));
     _entityComponentSignatures[entity.getId()].reset();
+
+    // remove entites from pools
+    for (auto& componentPool : _componentPools) {
+      if (componentPool) {
+        // TODO: check it
+        componentPool->removeFromPull(entity.getId());
+      }
+    }
     // add to freed ids
     _freedIds.push_back(entity.getId());
 
@@ -147,7 +155,7 @@ void Registry::update() {
   if (!_entitiesToBeKilled.empty()) _entitiesToBeKilled.clear();
 }
 
-void Registry::addEntityToSystem(Entity entity) {
+void Registry::addEntityToSystem(Entity entity) const {
   const auto entityId = entity.getId();
 
   const auto& entitySignature = _entityComponentSignatures[entityId];
@@ -163,19 +171,19 @@ void Registry::addEntityToSystem(Entity entity) {
   }
 }
 
-void Registry::removeEntityFromSystems(Entity entity) {
+void Registry::removeEntityFromSystems(Entity entity) const {
   for (auto& system : _systems) {
     system.second->removeEntityFromSystem(entity);
   }
 }
 
 // Entity class methods
-void Entity::tag(const std::string& tag) { registry->tagEntity(*this, tag); }
+void Entity::tag(const std::string& tag) const { registry->tagEntity(*this, tag); }
 
 bool Entity::hasTag(const std::string& tag) const { return registry->entityHasTag(*this, tag); }
 
-void Entity::group(const std::string& group) { registry->groupEntity(*this, group); }
+void Entity::group(const std::string& group) const { registry->groupEntity(*this, group); }
 
 bool Entity::belongsToGroup(const std::string& group) const { return registry->entityBelongsToGroup(*this, group); }
 
-void Entity::kill() { registry->killEntity(*this); }
+void Entity::kill() const { registry->killEntity(*this); }

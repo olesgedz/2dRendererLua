@@ -45,13 +45,13 @@ public:
   Entity& operator=(const Entity& other) = default;
 
 
-  void tag(const std::string& tag);
+  void tag(const std::string& tag) const;
   bool hasTag(const std::string& tag) const;
-  void group(const std::string& group);
+  void group(const std::string& group) const;
   bool belongsToGroup(const std::string& group) const;
 
   size_t getId() const { return _id; }
-  void kill();
+  void kill() const;
 
   bool operator==(const Entity& other) const { return _id == other._id; }
   bool operator>(const Entity& other) const { return _id > other._id; }
@@ -159,8 +159,8 @@ public:
   TSystem& getSystem() const;
 
   // Checks the component signature of the entity and adds it to the system if it matches
-  void addEntityToSystem(Entity entity);
-  void removeEntityFromSystems(Entity entity);
+  void addEntityToSystem(Entity entity) const;
+  void removeEntityFromSystems(Entity entity) const;
 
   // Tag managment
   void tagEntity(Entity entity, const std::string& tag);
@@ -218,7 +218,11 @@ void Registry::removeComponent(Entity entity) {
   const auto componentId = Component<T>::getId();
   const auto entityId = entity.getId();
 
+  auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
+  componentPool->remove(entityId);
+
   _entityComponentSignatures[entityId].set(componentId, false);
+
   Logger::log("Component removed from entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
 }
 
@@ -250,9 +254,6 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   // Get the needed component pool
   auto componentPool = std::static_pointer_cast<Pool<T>>(_componentPools[componentId]);
 
-  if (entityId >= componentPool->getSize()) {
-    componentPool->resize(_numEntities);
-  }
   // Create component of type T and forward args to it's constructor
   T newComponent(std::forward<TArgs>(args)...);
 
@@ -261,7 +262,12 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
 
   // Change the signature of the entity to include the component
   _entityComponentSignatures[entityId].set(componentId, true);
+
   Logger::log("Component added to entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
+
+  Logger::log(
+      "Component id " + std::to_string(componentId) + " of type " + typeid(T).name() + " POOL SIZE " +
+      std::to_string(componentPool->getSize()), Logger::LogColor::BLUE);
 }
 
 

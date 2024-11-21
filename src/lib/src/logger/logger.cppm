@@ -3,6 +3,7 @@ module;
 #include <chrono>
 #include <iostream>
 #include <ctime>
+#include <map>
 
 export module logger;
 
@@ -17,6 +18,19 @@ public:
     LOG_ERROR
   };
 
+  enum class LogColor {
+    RED,
+    GREEN,
+    YELLOW,
+    BLUE,
+    WHITE,
+    CYAN,
+    MAGENTA,
+    BLACK
+  };
+
+  static std::map<LogColor, std::string> logColorMap;
+
   struct LogEntry {
     LogType type;
     std::string message;
@@ -25,7 +39,7 @@ public:
 
   static std::vector<LogEntry> messages;
 
-  static void log(const std::string& message);
+  static void log(const std::string& message, LogColor color);
   static void err(const std::string& message);
 };
 
@@ -42,7 +56,7 @@ void Logger::err(const std::string& message) {
   std::cerr << "\x1B[91m" << logEntry.message << "\033[0m" << std::endl;
 }
 
-void Logger::log(const std::string& message) {
+void Logger::log(const std::string& message, LogColor color = LogColor::GREEN) {
   LogEntry logEntry;
 
   logEntry.type = LogType::LOG_INFO;
@@ -50,7 +64,7 @@ void Logger::log(const std::string& message) {
 
   messages.push_back(logEntry);
 
-  std::cout << "\x1B[32m" << logEntry.message << "\033[0m" << std::endl;
+  std::cout << logColorMap[color] << logEntry.message << "\033[0m" << std::endl;
 }
 
 std::string currentDateTimeToString() {
@@ -60,3 +74,14 @@ std::string currentDateTimeToString() {
 
   return output;
 }
+
+std::map<Logger::LogColor, std::string> Logger::logColorMap = {
+    {LogColor::RED, "\x1B[91m"},
+    {LogColor::GREEN, "\x1B[92m"},
+    {LogColor::YELLOW, "\x1B[93m"},
+    {LogColor::BLUE, "\x1B[94m"},
+    {LogColor::WHITE, "\x1B[97m"},
+    {LogColor::CYAN, "\x1B[96m"},
+    {LogColor::MAGENTA, "\x1B[95m"},
+    {LogColor::BLACK, "\x1B[30m"}
+};
