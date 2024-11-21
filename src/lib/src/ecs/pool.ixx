@@ -15,6 +15,7 @@ export module pool;
 export class IPool {
 public:
   virtual ~IPool() = default;
+  virtual void removeFromPull(int entityId) = 0;
 };
 
 
@@ -73,12 +74,31 @@ public:
     }
   }
 
-  T& get(int index) {
+  T& get(int entityId) {
+    int index = _entityIdToIndex[entityId];
     return static_cast<T&>(_data[index]);
   }
 
-  void remove(int index) {
-    _data.erase(_data.begin() + index);
+  void remove(int entityId) {
+    // Copy the last element to the deleted position to keep the array packed
+    int indexOfRemoved = _entityIdToIndex[entityId];
+    int indexOfLast = _size - 1;
+
+    // Update the index-entity maps
+    int entityIdOfLast = _indexToEntityId[indexOfLast];
+    _entityIdToIndex[entityIdOfLast] = indexOfRemoved;
+    _indexToEntityId[indexOfRemoved] = entityIdOfLast;
+
+    _entityIdToIndex.erase(entityId);
+    _indexToEntityId.erase(indexOfLast);
+
+    _size--;
+  }
+
+  void removeFromPull(int entityId) override {
+    if (_entityIdToIndex.contains(entityId)) {
+      remove(entityId);
+    }
   }
 
   T& operator [](unsigned int index) {
