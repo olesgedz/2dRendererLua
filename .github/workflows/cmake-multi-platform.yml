@@ -71,28 +71,3 @@ jobs:
         # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
         # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
         run: ctest --build-config --output-on-failure ${{ matrix.build_type }}
-      
-      # Generate coverage report
-      - name: Capture coverage info
-        run: |
-          cd build
-          lcov --capture --directory . --output-file coverage.info
-
-      # Filter out external and test files from coverage
-      - name: Remove unnecessary coverage data
-        run: |
-          cd build
-          lcov --remove coverage.info '/usr/*' '*/tests/*' --output-file coverage.info
-
-      # Generate HTML report (optional)
-      - name: Generate HTML report
-        run: |
-          cd build
-          genhtml coverage.info --output-directory coverage-report
-
-      # Upload HTML coverage report as artifact (optional)
-      - name: Upload coverage report artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: build/coverage-report
