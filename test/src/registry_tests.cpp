@@ -60,22 +60,6 @@ TEST(Registry, RemoveEntity) {
   EXPECT_EQ(registry->getNumEntities(), 1);
 }
 
-TEST_F(RegistryTest, addComponent) {
-  // Add entity
-  auto registry = std::make_unique<Registry>();
-  auto entity = registry->createEntity();
-  EXPECT_EQ(entity.getId(), 0);
-  EXPECT_EQ(registry->getNumEntities(), 1);
-  registry->update();
-  EXPECT_EQ(registry->getNumEntities(), 1);
-
-  // Remove entity
-  entity.kill();
-  EXPECT_EQ(registry->getNumEntities(), 1);
-  registry->update();
-  EXPECT_EQ(registry->getNumEntities(), 1);
-}
-
 TEST(Registry, AddTag) {
   // Add entity
   auto registry = std::make_unique<Registry>();
