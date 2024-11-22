@@ -86,6 +86,8 @@ public:
 
     // Update the index-entity maps
     int entityIdOfLast = _indexToEntityId[indexOfLast];
+
+    // Move last to remove
     _entityIdToIndex[entityIdOfLast] = indexOfRemoved;
     _indexToEntityId[indexOfRemoved] = entityIdOfLast;
 
@@ -111,4 +113,8 @@ private:
   // Helper maps to keep track of entity ids
   std::unordered_map<int, int> _entityIdToIndex;
   std::unordered_map<int, int> _indexToEntityId;
+
+
+  template <typename U>
+  friend struct PoolTest;
 };
