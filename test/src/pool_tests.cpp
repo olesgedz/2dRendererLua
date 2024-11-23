@@ -31,16 +31,19 @@ TEST(Pool, isEmpty) {
 }
 
 TEST(Pool, AddEntity) {
-  auto pool = std::make_shared<Pool<HealthComponent>>();
+  auto pool = std::make_shared<Pool<HealthComponent>>(1);
 
   EXPECT_EQ(pool->getSize(), 0);
 
   int entityId = 0;
+  pool->set(entityId++, HealthComponent(100));
+  pool->set(entityId++, HealthComponent(100));
   pool->set(entityId, HealthComponent(100));
-  EXPECT_EQ(pool->getSize(), 1);
+  EXPECT_EQ(pool->getSize(), 3);
 
   pool->removeFromPull(entityId);
-  EXPECT_EQ(pool->getSize(), 0);
+  EXPECT_EQ(pool->getSize(), 2);
+
 }
 
 TEST(Pool, RemoveEntity) {
