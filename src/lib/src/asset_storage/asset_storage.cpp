@@ -5,6 +5,7 @@ module;
 
 #include <cassert>
 #include <string>
+#include <filesystem>
 
 module asset_storage;
 
