@@ -86,7 +86,6 @@ private:
 
 public:
   System() {
-    Logger::err(_entities.size() + "SIZE");
   };
   ~System() = default;
 
