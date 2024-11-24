@@ -49,6 +49,12 @@ jobs:
         shell: bash
         run: |
           echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt upgrade -y
+          sudo apt install -y clang ninja-build
       - name: Setup vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git &&
