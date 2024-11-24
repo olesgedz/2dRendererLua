@@ -4,10 +4,11 @@ module;
 #include <SDL_image.h>
 #include <SDL_video.h>
 #include <imgui.h>
-#include <iostream>
+
 #include <filesystem>
 #include <fstream>
 #include <glm/glm.hpp>
+#include <iostream>
 
 export module game;
 export import logger;
@@ -20,9 +21,8 @@ import systems;
 import events;
 import settings;
 
-
 export class Game {
-public:
+ public:
   Game();
   ~Game();
 
@@ -35,7 +35,7 @@ public:
   void render();
   void destroy();
 
-private:
+ private:
   std::unique_ptr<Registry> _registry;
   std::unique_ptr<AssetStorage> _assetStorage;
   std::unique_ptr<EventBus> _eventBus;
@@ -51,7 +51,6 @@ private:
   bool _isDebug;
 
   std::filesystem::path _assetsPath = "../assets";
-
 
   const int _fps = 60;
   const int _millisecondsPerFrame = 1000 / _fps;
@@ -69,15 +68,14 @@ Game::Game() {
   Logger::log("Game constructor called!");
 }
 
-Game::~Game() {
-  Logger::log("Game destructor called!");
-}
+Game::~Game() { Logger::log("Game destructor called!"); }
 
 void Game::initialize() {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-    Logger::err("Error initializing SDL");
-    return;
+    std::string error = SDL_GetError();
+    throw std::runtime_error("Error initializing SDL error: " + error);
   }
+
   SDL_DisplayMode displayMode;
   SDL_GetCurrentDisplayMode(0, &displayMode);
 
@@ -86,18 +84,15 @@ void Game::initialize() {
 
   // Create a window
   _window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, Settings::windowWidth,
-                             Settings::windowHeight,
-                             SDL_WINDOW_RESIZABLE);
+                             Settings::windowHeight, SDL_WINDOW_RESIZABLE);
 
   if (!_window) {
-    Logger::err("Error creating SDL window");
-    return;
+    throw std::runtime_error("Error creating SDL window");
   }
 
   _renderer = SDL_CreateRenderer(_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   if (!_renderer) {
-    Logger::err("Error creating SDL renderer");
-    return;
+    throw std::runtime_error("Error creating SDL renderer");
   }
   _camera.x = 0;
   _camera.y = 0;
@@ -108,8 +103,7 @@ void Game::initialize() {
   _isRunning = true;
 }
 
-void Game::setup() {
-}
+void Game::setup() {}
 
 void Game::loadLevel(int level) {
   _registry->addSystem<MovementSystem>();
@@ -167,7 +161,7 @@ void Game::loadLevel(int level) {
 
   Settings::mapSize = glm::vec2(mapNumCols * tileSize * tileScale, mapNumRows * tileSize * tileScale);
 
-  //UI
+  // UI
   Entity radar = _registry->createEntity();
   radar.addComponent<TransformComponent>(glm::vec2(Settings::windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
   radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f), glm::vec4(0), true);
@@ -181,8 +175,8 @@ void Game::loadLevel(int level) {
   chopper.addComponent<RigidBodyComponent>(glm::vec2(0.f, 0.f));
   chopper.addComponent<SpriteComponent>("chopper-spritesheet", 1, glm::vec2(32.f, 32.f));
   chopper.addComponent<AnimationComponent>(2, 15, true);
-  chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -speed), glm::vec2(speed, 0),
-                                                    glm::vec2(0, speed), glm::vec2(-speed, 0));
+  chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -speed), glm::vec2(speed, 0), glm::vec2(0, speed),
+                                                    glm::vec2(-speed, 0));
   chopper.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
   chopper.addComponent<CameraFollowComponent>();
   chopper.addComponent<HealthComponent>(100);
@@ -262,10 +256,10 @@ void Game::update() {
   _registry->getSystem<KeyboardControlSystem>().subscribeToEvents(_eventBus);
   _registry->getSystem<ProjectileEmitSystem>().subscribeToEvents(_eventBus);
 
-  //Update the registry to process the entities to be added or killed
+  // Update the registry to process the entities to be added or killed
   _registry->update();
 
-  //Systems updates
+  // Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
   _registry->getSystem<CollisionSystem>().update(_eventBus);
   _registry->getSystem<DamageSystem>().update();
