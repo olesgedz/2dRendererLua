@@ -32,7 +32,7 @@ jobs:
           - os: ubuntu-latest
             c_compiler: clang
             cpp_compiler: clang++
-            generator: "Ninja"
+            generator: "Unix Makefiles"
         exclude:
           - os: windows-latest
             c_compiler: gcc
@@ -53,7 +53,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
           sudo apt update &&
-          sudo apt install -y clang ninja-build-1.10.1
+          sudo apt install -y clang ninja-build
       - name: Setup vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git &&
