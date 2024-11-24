@@ -29,10 +29,10 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             generator: "Visual Studio 17 2022"
-        #          - os: ubuntu-latest
-        #            c_compiler: clang
-        #            cpp_compiler: clang++
-        #            generator: "Unix Makefiles"
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+            generator: "Ninja"
         exclude:
           - os: windows-latest
             c_compiler: gcc
