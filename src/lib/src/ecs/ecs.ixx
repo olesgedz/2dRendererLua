@@ -263,10 +263,6 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   _entityComponentSignatures[entityId].set(componentId, true);
 
   Logger::log("Component added to entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
-
-  Logger::log(
-      "Component id " + std::to_string(componentId) + " of type " + typeid(T).name() + " POOL SIZE " +
-      std::to_string(componentPool->getSize()), Logger::LogColor::BLUE);
 }
 
 
