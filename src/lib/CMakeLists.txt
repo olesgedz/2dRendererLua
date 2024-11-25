@@ -12,14 +12,6 @@ if (DEFINED ENV{VCPKG_ROOT})
     set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE STRING "")
 endif ()
 
-file(GLOB_RECURSE source_files "src/*.cpp")
-file(GLOB_RECURSE header_files "src/*.hpp")
-file(GLOB_RECURSE module_files "src/*.cppm")
-file(GLOB_RECURSE module_interface_files "src/*.ixx")
-
-# That is a hack to make sure that all files are in the same list, but target source does not include module files type yet
-set(all_module_files ${module_files} ${module_interface_files})
-
 find_package(SDL2 CONFIG REQUIRED)
 find_package(SDL2_image CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
@@ -32,20 +24,27 @@ find_package(imgui CONFIG REQUIRED)
 
 add_library(${Target} STATIC)
 
+# Collect files
+file(GLOB_RECURSE source_files "src/*.cpp")
+file(GLOB_RECURSE header_files "src/*.hpp")
+file(GLOB_RECURSE module_interface_files "src/*.ixx")
+
+# Specify sources for the target
 target_sources(${Target}
         PUBLIC
-        ${source_files}     # Regular source file
-        PUBLIC
         FILE_SET modules TYPE CXX_MODULES
-        #        BASE_DIRS src
         FILES
-        ${all_module_files}     # Module files
+        ${module_interface_files}
         PUBLIC
         FILE_SET headers TYPE HEADERS
-        #        BASE_DIRS include
         FILES
-        ${header_files}     # Header files
+        ${header_files}
 )
+
+target_sources(${Target}
+        PRIVATE ${source_files}        # Source files
+)
+
 
 target_include_directories(${Target}
         PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/

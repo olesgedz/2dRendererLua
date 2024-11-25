@@ -4,7 +4,7 @@ module;
 #include <memory>
 #include <string>
 
-export module systems:damage_system;
+export module  damage_system;
 
 import ecs;
 import components;

@@ -4,7 +4,7 @@ module;
 
 #include <glm/glm.hpp>
 
-export module components:projectile_emitter_component;
+export module projectile_emitter_component;
 
 
 export struct ProjectileEmitterComponent {

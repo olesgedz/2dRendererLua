@@ -6,7 +6,7 @@ module;
 #include <glm//gtx/string_cast.hpp>
 #include <SDL2/SDL_keycode.h>
 
-export module systems:projectile_emit_system;
+export module  projectile_emit_system;
 
 
 import components;

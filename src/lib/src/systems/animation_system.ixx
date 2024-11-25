@@ -1,7 +1,7 @@
 module;
 #include <SDL2/SDL.h>
 
-export module systems:animation_system;
+export module animation_system;
 import ecs;
 import components;
 

@@ -2,7 +2,7 @@ module;
 
 #include <SDL_keycode.h>
 
-export module events:key_press_event;
+export module key_press_event;
 
 import ecs;
 import event_bus;
