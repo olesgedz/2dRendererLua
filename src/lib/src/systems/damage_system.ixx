@@ -4,7 +4,7 @@ module;
 #include <memory>
 #include <string>
 
-export module  damage_system;
+export module damage_system;
 
 import ecs;
 import components;
@@ -54,11 +54,11 @@ public:
     auto& healthComponent = player.getComponent<HealthComponent>();
 
     if (!projectileComponent.isFriendly) {
-      healthComponent.healthPrecentage -= projectileComponent.hitPercentDamage;
-      Logger::log("Player health: " + std::to_string(healthComponent.healthPrecentage));
+      healthComponent.healthPercentage -= projectileComponent.hitPercentDamage;
+      Logger::log("Player health: " + std::to_string(healthComponent.healthPercentage));
       projectile.kill();
     }
-    if (healthComponent.healthPrecentage <= 0) {
+    if (healthComponent.healthPercentage <= 0) {
       player.kill();
     }
   }
@@ -68,12 +68,12 @@ public:
     auto& healthComponent = enemy.getComponent<HealthComponent>();
 
     if (projectileComponent.isFriendly) {
-      healthComponent.healthPrecentage -= projectileComponent.hitPercentDamage;
-      Logger::log("Enemy health: " + std::to_string(healthComponent.healthPrecentage));
+      healthComponent.healthPercentage -= projectileComponent.hitPercentDamage;
+      Logger::log("Enemy health: " + std::to_string(healthComponent.healthPercentage));
       projectile.kill();
     }
-    if (healthComponent.healthPrecentage <= 0) {
-      enemy.kill();
+    if (healthComponent.healthPercentage <= 0) {
+      // enemy.kill();
     }
   }
 };
