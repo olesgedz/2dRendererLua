@@ -73,7 +73,7 @@ public:
       projectile.kill();
     }
     if (healthComponent.healthPercentage <= 0) {
-      // enemy.kill();
+      enemy.kill();
     }
   }
 };
