@@ -69,10 +69,15 @@ public:
 
     if (projectileComponent.isFriendly) {
       healthComponent.healthPercentage -= projectileComponent.hitPercentDamage;
-      Logger::log("Enemy health: " + std::to_string(healthComponent.healthPercentage));
+      Logger::log("Enemy health: " + std::to_string(healthComponent.healthPercentage)
+                  + " id: " + std::to_string(enemy.getId()), Logger::LogColor::MAGENTA);
       projectile.kill();
     }
+
+    // TODO: bug with wrong collider
     if (healthComponent.healthPercentage <= 0) {
+      Logger::log("Enemy killed: " + std::to_string(healthComponent.healthPercentage)
+                  + " id: " + std::to_string(enemy.getId()), Logger::LogColor::MAGENTA);
       enemy.kill();
     }
   }
