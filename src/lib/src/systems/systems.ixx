@@ -11,3 +11,4 @@ export import camera_movement_system;
 export import projectile_emit_system;
 export import projectile_lifecycle_system;
 export import render_text_system;
+export import health_bar_render_system;

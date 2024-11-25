@@ -124,6 +124,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<ProjectileEmitSystem>();
   _registry->addSystem<ProjectileLifecycleSystem>();
   _registry->addSystem<RenderTextSystem>();
+  _registry->addSystem<HealthBarRenderSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -134,6 +135,8 @@ void Game::loadLevel(int level) {
   _assetStorage->addTexture("radar-spritesheet", _assetsPath / "images/radar.png", _renderer);
   _assetStorage->addTexture("bullet-image", _assetsPath / "images/bullet.png", _renderer);
   _assetStorage->addFont("charriot-font", _assetsPath / "fonts/charriot.ttf", 16);
+  _assetStorage->addFont("pico8-font-5", _assetsPath / "fonts/pico8.ttf", 5);
+  _assetStorage->addFont("pico8-font-10", _assetsPath / "fonts/pico8.ttf", 10);
 
   // Load the tilemap
   int tileSize = 32;
@@ -275,6 +278,7 @@ void Game::update() {
 
   // Systems updates
   _registry->getSystem<MovementSystem>().update(_deltaTime);
+  _registry->getSystem<AnimationSystem>().update(_deltaTime);
   _registry->getSystem<CollisionSystem>().update(_eventBus);
   _registry->getSystem<DamageSystem>().update();
   _registry->getSystem<CameraMovementSystem>().update(_camera);
@@ -286,9 +290,9 @@ void Game::render() {
   SDL_SetRenderDrawColor(_renderer, 21, 21, 21, 255);
   SDL_RenderClear(_renderer);
 
-  _registry->getSystem<AnimationSystem>().update(_deltaTime);
   _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage, _camera);
   _registry->getSystem<RenderTextSystem>().update(_renderer, _assetStorage, _camera);
+  _registry->getSystem<HealthBarRenderSystem>().update(_renderer, _assetStorage, _camera);
 
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);

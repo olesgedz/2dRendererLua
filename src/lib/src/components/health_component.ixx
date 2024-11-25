@@ -6,10 +6,10 @@ module;
 export module health_component;
 
 export struct HealthComponent {
-  int healthPrecentage;
+  int healthPercentage;
 
 
-  explicit HealthComponent(int healthPrecentage = 0) :
-    healthPrecentage(healthPrecentage) {
+  explicit HealthComponent(int healthPercentage = 0) :
+    healthPercentage(healthPercentage) {
   }
 };
