@@ -4,7 +4,7 @@ module;
 #include <string>
 #include <glm/glm.hpp>
 
-export module systems:collision_system;
+export module collision_system;
 
 import ecs;
 import logger;

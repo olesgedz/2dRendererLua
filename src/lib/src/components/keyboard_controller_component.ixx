@@ -2,7 +2,7 @@ module;
 
 #include <glm/glm.hpp>
 
-export module components:keyboard_controlled_component;
+export module keyboard_controlled_component;
 
 
 export struct KeyboardControlledComponent {

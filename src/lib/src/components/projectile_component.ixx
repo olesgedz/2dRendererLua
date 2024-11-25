@@ -2,7 +2,7 @@ module;
 
 #include <SDL2/SDL.h>
 
-export module components:projectile_component;
+export module projectile_component;
 
 export struct ProjectileComponent {
   bool isFriendly;

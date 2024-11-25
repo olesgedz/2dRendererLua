@@ -1,6 +1,6 @@
 module;
 
-export module events:collision_event;
+export module collision_event;
 
 import ecs;
 import event_bus;

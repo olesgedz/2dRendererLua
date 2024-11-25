@@ -3,7 +3,7 @@ module;
 #include <string>
 #include <glm//gtx/string_cast.hpp>
 
-export module systems:movement_system;
+export module  movement_system;
 
 import components;
 import logger;

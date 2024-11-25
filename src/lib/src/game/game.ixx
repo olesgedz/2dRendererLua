@@ -2,6 +2,7 @@ module;
 
 #include <SDL2/SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <SDL_video.h>
 #include <imgui.h>
 
@@ -22,7 +23,7 @@ import events;
 import settings;
 
 export class Game {
- public:
+public:
   Game();
   ~Game();
 
@@ -35,7 +36,7 @@ export class Game {
   void render();
   void destroy();
 
- private:
+private:
   std::unique_ptr<Registry> _registry;
   std::unique_ptr<AssetStorage> _assetStorage;
   std::unique_ptr<EventBus> _eventBus;
@@ -76,6 +77,11 @@ void Game::initialize() {
     throw std::runtime_error("Error initializing SDL error: " + error);
   }
 
+  if (TTF_Init() != 0) {
+    std::string error = TTF_GetError();
+    throw std::runtime_error("Error initializing TTF error: " + error);
+  }
+
   SDL_DisplayMode displayMode;
   SDL_GetCurrentDisplayMode(0, &displayMode);
 
@@ -103,7 +109,8 @@ void Game::initialize() {
   _isRunning = true;
 }
 
-void Game::setup() {}
+void Game::setup() {
+}
 
 void Game::loadLevel(int level) {
   _registry->addSystem<MovementSystem>();
@@ -116,6 +123,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<CameraMovementSystem>();
   _registry->addSystem<ProjectileEmitSystem>();
   _registry->addSystem<ProjectileLifecycleSystem>();
+  _registry->addSystem<RenderTextSystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -125,6 +133,7 @@ void Game::loadLevel(int level) {
   _assetStorage->addTexture("chopper-spritesheet", _assetsPath / "images/chopper-spritesheet.png", _renderer);
   _assetStorage->addTexture("radar-spritesheet", _assetsPath / "images/radar.png", _renderer);
   _assetStorage->addTexture("bullet-image", _assetsPath / "images/bullet.png", _renderer);
+  _assetStorage->addFont("charriot-font", _assetsPath / "fonts/charriot.ttf", 16);
 
   // Load the tilemap
   int tileSize = 32;
@@ -203,6 +212,11 @@ void Game::loadLevel(int level) {
   truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 10, false);
   truck.addComponent<HealthComponent>(100);
   truck.group("enemies");
+
+  Entity label = _registry->createEntity();
+  SDL_Color white = {255, 255, 255};
+  label.addComponent<TextLabelComponent>(glm::vec2(100, 100),
+                                         "THIS IS A TEXT LABEL!!!", "charriot-font", white, true);
 }
 
 void Game::run() {
@@ -274,6 +288,7 @@ void Game::render() {
 
   _registry->getSystem<AnimationSystem>().update(_deltaTime);
   _registry->getSystem<RenderSystem>().update(_renderer, _assetStorage, _camera);
+  _registry->getSystem<RenderTextSystem>().update(_renderer, _assetStorage, _camera);
 
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);
@@ -283,6 +298,7 @@ void Game::render() {
 }
 
 void Game::destroy() {
+  TTF_Quit();
   SDL_DestroyRenderer(_renderer);
   SDL_DestroyWindow(_window);
   SDL_Quit();

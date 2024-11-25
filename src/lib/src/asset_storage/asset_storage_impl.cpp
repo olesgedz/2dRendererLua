@@ -2,10 +2,11 @@ module;
 
 #include <SDL2/SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 
 #include <cassert>
-#include <string>
 #include <filesystem>
+#include <string>
 
 module asset_storage;
 
@@ -19,6 +20,11 @@ void AssetStorage::clearAssets() {
     SDL_DestroyTexture(texture.second);
   }
   _textures.clear();
+
+  for (auto& font : _fonts) {
+    TTF_CloseFont(font.second);
+  }
+  _fonts.clear();
 }
 
 void AssetStorage::addTexture(const std::string& id, std::filesystem::path path, SDL_Renderer* renderer) {
@@ -44,4 +50,16 @@ void AssetStorage::addTexture(const std::string& id, std::filesystem::path path,
 SDL_Texture* AssetStorage::getTexture(const std::string& id) const {
   assert(_textures.contains(id) && "Texture not found in assetStorage");
   return _textures.at(id);
+}
+
+void AssetStorage::addFont(const std::string& assetId, std::filesystem::path path, int fontSize) {
+  if (!std::filesystem::exists(path)) {
+    throw std::runtime_error("Font file not found: " + path.string());
+  }
+  _fonts.emplace(assetId, TTF_OpenFont(path.string().c_str(), fontSize));
+}
+
+TTF_Font* AssetStorage::getFont(const std::string& assetId) {
+  assert(_fonts.contains(assetId) && "Font not found in assetStorage");
+  return _fonts.at(assetId);
 }
