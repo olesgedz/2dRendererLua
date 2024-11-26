@@ -24,7 +24,6 @@ protected:
   static size_t _nextId;
 };
 
-size_t BaseComponent::_nextId = 0;
 
 template <typename T>
 class Component : public BaseComponent {

@@ -3,7 +3,7 @@ module;
 #include <string>
 #include <glm//gtx/string_cast.hpp>
 
-export module  movement_system;
+export module systems:movement_system;
 
 import components;
 import logger;
@@ -15,7 +15,7 @@ public:
   void update(float deltaTime) const;
 };
 
-MovementSystem::MovementSystem() : System() {
+MovementSystem::MovementSystem() {
   requireComponent<TransformComponent>();
   requireComponent<RigidBodyComponent>();
 }

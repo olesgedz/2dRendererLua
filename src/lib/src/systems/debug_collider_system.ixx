@@ -5,8 +5,7 @@ module;
 #include <memory>
 #include <string>
 #include <vector>
-export module  debug_collider_system;
-
+export module systems:debug_collider_system;
 
 import components;
 import logger;

@@ -2,7 +2,7 @@ module;
 
 #include <SDL2/SDL.h>
 
-export module camera_movement_system;
+export module systems:camera_movement_system;
 
 import ecs;
 import components;

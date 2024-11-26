@@ -2,7 +2,7 @@ module;
 
 #include <SDL_timer.h>
 
-export module projectile_lifecycle_system;
+export module systems:projectile_lifecycle_system;
 
 import ecs;
 import components;

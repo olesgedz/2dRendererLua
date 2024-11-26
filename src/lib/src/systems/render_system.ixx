@@ -7,7 +7,7 @@ module;
 #include <string>
 #include <vector>
 
-export module  render_system;
+export module systems:render_system;
 
 import components;
 import logger;
@@ -20,7 +20,7 @@ public:
   void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
 };
 
-RenderSystem::RenderSystem() : System() {
+RenderSystem::RenderSystem() {
   requireComponent<TransformComponent>();
   requireComponent<SpriteComponent>();
 }

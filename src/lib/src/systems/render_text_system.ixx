@@ -8,7 +8,7 @@ module;
 #include <string>
 #include <vector>
 
-export module render_text_system;
+export module systems:render_text_system;
 
 import components;
 import logger;

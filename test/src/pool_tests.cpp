@@ -73,9 +73,9 @@ TEST(Pool, SetEntity) {
   pool->set(entityId, HealthComponent(100));
 
   EXPECT_EQ(pool->getSize(), 1);
-  EXPECT_EQ(pool->get(entityId).healthPrecentage, 100);
+  EXPECT_EQ(pool->get(entityId).healthPercentage, 100);
 
   pool->set(entityId, HealthComponent(42));
   EXPECT_EQ(pool->getSize(), 1);
-  EXPECT_EQ(pool->get(entityId).healthPrecentage, 42);
+  EXPECT_EQ(pool->get(entityId).healthPercentage, 42);
 }
