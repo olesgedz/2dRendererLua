@@ -29,7 +29,8 @@ file(GLOB_RECURSE test_source_files "test/src/*.cpp")
 file(GLOB_RECURSE test_header_files "test/src/*.h")
 find_package(GTest CONFIG REQUIRED)
 
-add_executable(unit_tests ${test_source_files} ${test_header_files})
+add_executable(unit_tests ${test_source_files} ${test_header_files}
+        test/src/damage_system_tests.cpp)
 
 target_link_libraries(
         unit_tests

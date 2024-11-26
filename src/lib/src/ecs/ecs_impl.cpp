@@ -59,6 +59,13 @@ bool Registry::entityHasTag(Entity entity, const std::string& tag) const {
   return entityPerTag.find(tag)->second == entity;
 }
 
+std::string Registry::getTagOfEntity(size_t idEntity) const {
+  if (tagPerEntity.contains(idEntity))
+    return tagPerEntity.at(idEntity);
+  else
+    return "";
+}
+
 void Registry::removeEntityTag(Entity entity) {
   auto taggedEntity = tagPerEntity.find(entity.getId());
   if (taggedEntity != tagPerEntity.end()) {
@@ -82,7 +89,7 @@ bool Registry::entityBelongsToGroup(Entity entity, const std::string& group) con
     return false;
   }
   auto groupEntities = entitiesPerGroup.at(group);
-  return groupEntities.find(entity.getId()) != groupEntities.end();
+  return groupEntities.contains(std::set<Entity>::key_type(entity.getId()));
 }
 
 std::vector<Entity> Registry::getEntitiesByGroup(const std::string& group) const {
@@ -122,7 +129,6 @@ Entity Registry::createEntity() {
   }
 
   Logger::log("Entity created with id: " + std::to_string(entityId));
-
   return entity;
 }
 
@@ -183,6 +189,8 @@ void Registry::removeEntityFromSystems(Entity entity) const {
 void Entity::tag(const std::string& tag) const { registry->tagEntity(*this, tag); }
 
 bool Entity::hasTag(const std::string& tag) const { return registry->entityHasTag(*this, tag); }
+
+std::string Entity::getTag() const { return registry->getTagOfEntity(getId()); }
 
 void Entity::group(const std::string& group) const { registry->groupEntity(*this, group); }
 

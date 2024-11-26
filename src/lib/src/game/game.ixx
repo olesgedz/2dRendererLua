@@ -219,7 +219,7 @@ void Game::loadLevel(int level) {
   truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
   // truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 10, false);
   truck.addComponent<HealthComponent>(100);
-  // truck.group("enemies");
+  truck.group("enemies");
 
   Entity label1 = _registry->createEntity();
   label1.addComponent<TextLabelComponent>(glm::vec2(100, 100),
