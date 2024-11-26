@@ -36,8 +36,7 @@ public:
 
 export class Entity {
 public:
-  Entity(size_t id) : _id(id) {
-  };
+  explicit Entity(size_t id) : _id(id) { registry = nullptr; };
 
   Entity(const Entity& other) = default;
 
@@ -45,11 +44,12 @@ public:
 
 
   void tag(const std::string& tag) const;
-  bool hasTag(const std::string& tag) const;
+  [[nodiscard]] bool hasTag(const std::string& tag) const;
   void group(const std::string& group) const;
-  bool belongsToGroup(const std::string& group) const;
+  [[nodiscard]] bool belongsToGroup(const std::string& group) const;
+  [[nodiscard]] std::string getTag() const;
 
-  size_t getId() const { return _id; }
+  [[nodiscard]] size_t getId() const { return _id; }
   void kill() const;
 
   bool operator==(const Entity& other) const { return _id == other._id; }
@@ -63,7 +63,7 @@ public:
   template <typename TComponent, typename... TArgs>
   void removeComponent();
   template <typename TComponent, typename... TArgs>
-  bool hasComponent() const;
+  [[nodiscard]] bool hasComponent() const;
   template <typename TComponent, typename... TArgs>
   TComponent& getComponent();
 
@@ -84,17 +84,14 @@ private:
   std::vector<Entity> _entities;
 
 public:
-  System() {
-  };
+  System() = default;
   ~System() = default;
 
   void addEntity(Entity entity);
 
   void removeEntityFromSystem(Entity entity);
 
-  std::vector<Entity> getSystemEntities() const {
-    return _entities;
-  }
+  [[nodiscard]] std::vector<Entity> getSystemEntities() const { return _entities; }
 
 
   [[nodiscard]] const Signature& getComponentSignature() const { return _componentSignature; }
@@ -165,6 +162,7 @@ public:
   bool entityHasTag(Entity entity, const std::string& tag) const;
   void removeEntityTag(Entity entity);
   Entity getEntityByTag(const std::string& tag) const;
+  std::string getTagOfEntity(size_t idEntity) const;
 
   // Group managment
   void groupEntity(Entity entity, const std::string& group);
@@ -195,13 +193,12 @@ private:
 
   // Entity tags (one tag name per entity)
   std::unordered_map<std::string, Entity> entityPerTag;
-  std::unordered_map<int, std::string> tagPerEntity;
+  std::unordered_map<size_t, std::string> tagPerEntity;
 
   // Entity groups (a set of entities pre group name)
   std::unordered_map<std::string, std::set<Entity>> entitiesPerGroup;
-  std::unordered_map<int, std::string> groupPerEntity;
+  std::unordered_map<size_t, std::string> groupPerEntity;
 };
-
 
 template <typename T>
 bool Registry::hasComponent(Entity entity) const {
@@ -261,9 +258,8 @@ void Registry::addComponent(Entity entity, TArgs&&... args) {
   // Change the signature of the entity to include the component
   _entityComponentSignatures[entityId].set(componentId, true);
 
-  Logger::log("Component added to entity: " + std::to_string(entityId) + " of type" + typeid(T).name());
+  Logger::log("Component added to entity: " + std::to_string(entityId) + " of type " + typeid(T).name());
 }
-
 
 template <typename TSystem, typename... TArgs>
 void Registry::addSystem(TArgs&&... args) {
