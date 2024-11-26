@@ -202,7 +202,7 @@ void Game::loadLevel(int level) {
   tank.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
   tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  // tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 10, false);
+  tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 10, false);
   tank.addComponent<HealthComponent>(100);
   tank.group("enemies");
 
@@ -217,7 +217,7 @@ void Game::loadLevel(int level) {
   truck.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
   truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
   truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  // truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 10, false);
+  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 10, false);
   truck.addComponent<HealthComponent>(100);
   truck.group("enemies");
 

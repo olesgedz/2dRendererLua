@@ -83,6 +83,7 @@ public:
     // Copy the last element to the deleted position to keep the array packed
     int indexOfRemoved = _entityIdToIndex[entityId];
     int indexOfLast = _size - 1;
+    _data[indexOfRemoved] = _data[indexOfLast];
 
     // Update the index-entity maps
     int entityIdOfLast = _indexToEntityId[indexOfLast];
@@ -93,7 +94,7 @@ public:
 
     _entityIdToIndex.erase(entityId);
     _indexToEntityId.erase(indexOfLast);
-
+    
     _size--;
   }
 
