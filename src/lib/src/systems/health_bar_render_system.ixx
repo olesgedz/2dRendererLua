@@ -8,8 +8,7 @@ module;
 #include <string>
 #include <vector>
 
-export module health_bar_render_system;
-
+export module systems:health_bar_render_system;
 
 import components;
 import logger;
@@ -22,7 +21,7 @@ public:
   void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
 };
 
-HealthBarRenderSystem::HealthBarRenderSystem() : System() {
+HealthBarRenderSystem::HealthBarRenderSystem() {
   requireComponent<TransformComponent>();
   requireComponent<SpriteComponent>();
   requireComponent<HealthComponent>();

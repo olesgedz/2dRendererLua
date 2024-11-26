@@ -6,8 +6,7 @@ module;
 #include <glm//gtx/string_cast.hpp>
 #include <SDL2/SDL_keycode.h>
 
-export module  projectile_emit_system;
-
+export module systems:projectile_emit_system;
 
 import components;
 import logger;
@@ -24,7 +23,7 @@ public:
   void shoot();
 };
 
-ProjectileEmitSystem::ProjectileEmitSystem() : System() {
+ProjectileEmitSystem::ProjectileEmitSystem() {
   requireComponent<ProjectileEmitterComponent>();
   requireComponent<TransformComponent>();
 }

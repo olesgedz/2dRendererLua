@@ -5,7 +5,7 @@ module;
 #include <memory>
 #include <SDL2/SDL_keycode.h>
 
-export module keyboard_control_system;
+export module systems:keyboard_control_system;
 
 import components;
 import logger;

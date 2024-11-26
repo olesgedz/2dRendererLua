@@ -13,6 +13,8 @@ module;
 
 module ecs;
 
+size_t BaseComponent::_nextId = 0;
+
 // System class methods
 void System::addEntity(Entity entity) { _entities.push_back(entity); }
 
