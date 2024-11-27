@@ -57,6 +57,7 @@ private:
   const int _fps = 60;
   const int _millisecondsPerFrame = 1000 / _fps;
   const bool _uncapFramerate = true;
+  ImGuiIO _io;
 };
 
 Game::Game() {
@@ -104,10 +105,10 @@ void Game::initialize() {
   IMGUI_CHECKVERSION();
   // init ImGui
   ImGui::CreateContext();
-  ImGuiIO& io = ImGui::GetIO();
-  (void)io;
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+  _io = ImGui::GetIO();
+  (void)_io;
+  _io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  _io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
 
   // Setup Dear ImGui style
   ImGui::StyleColorsDark();
@@ -256,6 +257,7 @@ void Game::processInput() {
   SDL_Event event;
 
   while (SDL_PollEvent(&event)) {
+    ImGui_ImplSDL2_ProcessEvent(&event);
     switch (event.type) {
       case SDL_QUIT:
         _isRunning = false;
@@ -318,7 +320,14 @@ void Game::render() {
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);
   }
-
+  ImGui_ImplSDLRenderer2_NewFrame();
+  ImGui_ImplSDL2_NewFrame();
+  ImGui::NewFrame();
+  bool show = true;
+  ImGui::ShowDemoWindow(&show);
+  ImGui::Render();
+  SDL_RenderSetScale(_renderer, _io.DisplayFramebufferScale.x, _io.DisplayFramebufferScale.y);
+  ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _renderer);
   SDL_RenderPresent(_renderer);
 }
 
