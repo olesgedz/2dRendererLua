@@ -1,15 +1,16 @@
 module;
-
+#include <imgui.h>
+#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdlrenderer2.h>
 #include <SDL2/SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <SDL_video.h>
-#include <imgui.h>
+
 
 #include <filesystem>
 #include <fstream>
 #include <glm/glm.hpp>
-#include <iostream>
 
 export module game;
 export import logger;
@@ -100,6 +101,22 @@ void Game::initialize() {
   if (!_renderer) {
     throw std::runtime_error("Error creating SDL renderer");
   }
+  IMGUI_CHECKVERSION();
+  // init ImGui
+  ImGui::CreateContext();
+  ImGuiIO& io = ImGui::GetIO();
+  (void)io;
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+  io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+
+  // Setup Dear ImGui style
+  ImGui::StyleColorsDark();
+  ImGui::StyleColorsLight();
+
+  // Setup Platform/Renderer backends
+  ImGui_ImplSDL2_InitForSDLRenderer(_window, _renderer);
+  ImGui_ImplSDLRenderer2_Init(_renderer);
+
   _camera.x = 0;
   _camera.y = 0;
   _camera.w = Settings::windowWidth;
