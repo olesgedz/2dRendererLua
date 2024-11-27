@@ -59,13 +59,9 @@ target_include_directories(${Target} PUBLIC ${LUA_INCLUDE_DIR})
 target_include_directories(${Target} PUBLIC ${IMGUI_INCLUDE_DIRS})
 
 target_link_libraries(${Target} PUBLIC ${LUA_LIBRARIES})
-
-target_link_libraries(${Target} PUBLIC
-        imgui::imgui
-)
-
 target_link_libraries(${Target} PUBLIC SDL2::SDL2 SDL2::SDL2main)
 target_link_libraries(${Target} PUBLIC $<IF:$<TARGET_EXISTS:SDL2_image::SDL2_image>,SDL2_image::SDL2_image,SDL2_image::SDL2_image-static>)
 target_link_libraries(${Target} PUBLIC $<IF:$<TARGET_EXISTS:SDL2_mixer::SDL2_mixer>,SDL2_mixer::SDL2_mixer,SDL2_mixer::SDL2_mixer-static>)
 target_link_libraries(${Target} PUBLIC $<IF:$<TARGET_EXISTS:SDL2_ttf::SDL2_ttf>,SDL2_ttf::SDL2_ttf,SDL2_ttf::SDL2_ttf-static>)
 target_link_libraries(${Target} PUBLIC sol2)
+target_link_libraries(${Target} PRIVATE imgui::imgui)
