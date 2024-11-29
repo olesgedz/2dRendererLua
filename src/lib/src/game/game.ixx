@@ -332,6 +332,8 @@ void Game::render() {
 }
 
 void Game::destroy() {
+  ImGui_ImplSDLRenderer2_Shutdown();
+  ImGui::DestroyContext();
   TTF_Quit();
   SDL_DestroyRenderer(_renderer);
   SDL_DestroyWindow(_window);
