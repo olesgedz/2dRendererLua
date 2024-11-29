@@ -319,20 +319,21 @@ void Game::render() {
 
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);
+    ImGui_ImplSDLRenderer2_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
+    ImGui::NewFrame();
+    bool show = true;
+    ImGui::ShowDemoWindow(&show);
+    ImGui::Render();
+    SDL_RenderSetScale(_renderer, _io.DisplayFramebufferScale.x, _io.DisplayFramebufferScale.y);
+    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _renderer);
   }
-  ImGui_ImplSDLRenderer2_NewFrame();
-  ImGui_ImplSDL2_NewFrame();
-  ImGui::NewFrame();
-  bool show = true;
-  ImGui::ShowDemoWindow(&show);
-  ImGui::Render();
-  SDL_RenderSetScale(_renderer, _io.DisplayFramebufferScale.x, _io.DisplayFramebufferScale.y);
-  ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _renderer);
   SDL_RenderPresent(_renderer);
 }
 
 void Game::destroy() {
   ImGui_ImplSDLRenderer2_Shutdown();
+  ImGui_ImplSDL2_Shutdown();
   ImGui::DestroyContext();
   TTF_Quit();
   SDL_DestroyRenderer(_renderer);
