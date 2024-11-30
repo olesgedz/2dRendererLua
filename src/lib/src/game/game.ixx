@@ -143,6 +143,7 @@ void Game::loadLevel(int level) {
   _registry->addSystem<ProjectileLifecycleSystem>();
   _registry->addSystem<RenderTextSystem>();
   _registry->addSystem<HealthBarRenderSystem>();
+  _registry->addSystem<RenderGUISystem>();
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
@@ -227,7 +228,7 @@ void Game::loadLevel(int level) {
   Entity label = _registry->createEntity();
   SDL_Color white = {255, 255, 255};
   label.addComponent<TextLabelComponent>(glm::vec2(300, 200),
-                                         "THIS IS A TEXT LABEL!!!", "charriot-font", white, true);
+                                         "THIS IS A TEXT LABEL!!! Fixed", "charriot-font", white, true);
 
   Entity truck = _registry->createEntity();
 
@@ -241,7 +242,7 @@ void Game::loadLevel(int level) {
 
   Entity label1 = _registry->createEntity();
   label1.addComponent<TextLabelComponent>(glm::vec2(100, 100),
-                                          "THIS IS A TEXT LABEL!!!", "charriot-font", white, true);
+                                          "THIS IS A TEXT LABEL!!! Not Fixed", "charriot-font", white, false);
 }
 
 void Game::run() {
@@ -258,6 +259,10 @@ void Game::processInput() {
 
   while (SDL_PollEvent(&event)) {
     ImGui_ImplSDL2_ProcessEvent(&event);
+
+    int mouseX, mouseY;
+    const int buttons = SDL_GetMouseState(&mouseX, &mouseY);
+
     switch (event.type) {
       case SDL_QUIT:
         _isRunning = false;
@@ -319,14 +324,7 @@ void Game::render() {
 
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);
-    ImGui_ImplSDLRenderer2_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
-    ImGui::NewFrame();
-    bool show = true;
-    ImGui::ShowDemoWindow(&show);
-    ImGui::Render();
-    SDL_RenderSetScale(_renderer, _io.DisplayFramebufferScale.x, _io.DisplayFramebufferScale.y);
-    ImGui_ImplSDLRenderer2_RenderDrawData(ImGui::GetDrawData(), _renderer);
+    _registry->getSystem<RenderGUISystem>().update(_renderer, _io);
   }
   SDL_RenderPresent(_renderer);
 }

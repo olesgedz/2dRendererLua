@@ -18,7 +18,7 @@ public:
   void update(SDL_Renderer* renderer, const SDL_Rect& camera) const;
 
 private:
-  void _drawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius) const;
+  void _drawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius, const SDL_Rect& camera) const;
 };
 
 DebugColliderSystem::DebugColliderSystem() : System() {
@@ -42,9 +42,8 @@ void DebugColliderSystem::update(SDL_Renderer* renderer, const SDL_Rect& camera)
       const auto& collider = entity.getComponent<BoxColliderComponent>();
 
       SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-      SDL_RenderDrawPoint(renderer, transform.position.x, transform.position.y);
-      SDL_Rect rect = SDL_Rect(transform.position.x + collider.offset.x + camera.x,
-                               transform.position.y + collider.offset.y + camera.y,
+      SDL_Rect rect = SDL_Rect(transform.position.x + collider.offset.x - camera.x,
+                               transform.position.y + collider.offset.y - camera.y,
                                collider.size.x * transform.scale.x,
                                collider.size.y * transform.scale.y);
       SDL_RenderDrawRect(renderer, &rect);
@@ -55,12 +54,16 @@ void DebugColliderSystem::update(SDL_Renderer* renderer, const SDL_Rect& camera)
 
       SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
       _drawCircle(renderer, transform.position.x + collider.offset.x,
-                  transform.position.y + collider.offset.y, collider.radius);
+                  transform.position.y + collider.offset.y, collider.radius, camera);
     }
   }
 }
 
-void DebugColliderSystem::_drawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius) const {
+void DebugColliderSystem::_drawCircle(SDL_Renderer* renderer,
+                                      int centreX,
+                                      int centreY,
+                                      int radius,
+                                      const SDL_Rect& camera) const {
   const int diameter = (radius * 2);
 
   int x = (radius - 1);
@@ -71,14 +74,13 @@ void DebugColliderSystem::_drawCircle(SDL_Renderer* renderer, int centreX, int c
 
   while (x >= y) {
     //  Each of the following renders an octant of the circle
-    SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
-    SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
-    SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
-    SDL_RenderDrawPoint(renderer, centreX - x, centreY + y);
-    SDL_RenderDrawPoint(renderer, centreX + y, centreY - x);
-    SDL_RenderDrawPoint(renderer, centreX + y, centreY + x);
-    SDL_RenderDrawPoint(renderer, centreX - y, centreY - x);
-    SDL_RenderDrawPoint(renderer, centreX - y, centreY + x);
+    SDL_RenderDrawPoint(renderer, centreX + x - camera.x, centreY - y - camera.y);
+    SDL_RenderDrawPoint(renderer, centreX - x - camera.x, centreY - y - camera.y);
+    SDL_RenderDrawPoint(renderer, centreX - x - camera.x, centreY + y - camera.y);
+    SDL_RenderDrawPoint(renderer, centreX + y - camera.x, centreY - x - camera.y);
+    SDL_RenderDrawPoint(renderer, centreX + y - camera.x, centreY + x - camera.y);
+    SDL_RenderDrawPoint(renderer, centreX - y - camera.x, centreY - x - camera.y);
+    SDL_RenderDrawPoint(renderer, centreX - y - camera.x, centreY + x - camera.y);
 
     if (error <= 0) {
       ++y;
