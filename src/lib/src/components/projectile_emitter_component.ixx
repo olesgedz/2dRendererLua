@@ -1,7 +1,6 @@
 module;
 
 #include <SDL_timer.h>
-
 #include <glm/glm.hpp>
 
 export module projectile_emitter_component;

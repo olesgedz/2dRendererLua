@@ -1,7 +1,4 @@
-
 module;
-
-#include <glm/glm.hpp>
 
 export module health_component;
 
