@@ -6,6 +6,7 @@ module;
 
 #include <cassert>
 #include <filesystem>
+#include <ranges>
 #include <string>
 
 module asset_storage;
@@ -62,4 +63,12 @@ void AssetStorage::addFont(const std::string& assetId, std::filesystem::path pat
 TTF_Font* AssetStorage::getFont(const std::string& assetId) {
   assert(_fonts.contains(assetId) && "Font not found in assetStorage");
   return _fonts.at(assetId);
+}
+
+std::vector<const char*> AssetStorage::getTextureIds() const {
+  std::vector<const char*> textureIds;
+  for (const auto& id : std::ranges::views::keys(_textures)) {
+    textureIds.push_back(id.c_str());
+  }
+  return textureIds;
 }

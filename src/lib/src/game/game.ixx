@@ -324,7 +324,7 @@ void Game::render() {
 
   if (_isDebug) {
     _registry->getSystem<DebugColliderSystem>().update(_renderer, _camera);
-    _registry->getSystem<RenderGUISystem>().update(_renderer, _io);
+    _registry->getSystem<RenderGUISystem>().update(_renderer, _io, _registry);
   }
   SDL_RenderPresent(_renderer);
 }

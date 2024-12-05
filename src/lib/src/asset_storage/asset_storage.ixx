@@ -24,6 +24,7 @@ public:
 
   void addFont(const std::string& assetId, std::filesystem::path path, int fontSize);
   TTF_Font* getFont(const std::string& assetId);
+  [[nodiscard]] std::vector<const char*> getTextureIds() const;
 
 private:
   std::unordered_map<std::string, SDL_Texture*> _textures;
