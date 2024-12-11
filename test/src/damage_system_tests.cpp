@@ -12,6 +12,7 @@ import systems;
 import event_bus;
 import settings;
 import logger;
+import game;
 
 class DamageSystemTest : public ::testing::Test {
  public:
@@ -31,6 +32,10 @@ class DamageSystemTest : public ::testing::Test {
 };
 
 TEST_F(DamageSystemTest, AddComponent) {
+  // Added because of functionality of entity culling
+  Game::mapWidth = 1000;
+  Game::mapHeight = 1000;
+
   Entity tank = registry->createEntity();
   registry->addSystem<MovementSystem>();
   registry->addSystem<DamageSystem>();
