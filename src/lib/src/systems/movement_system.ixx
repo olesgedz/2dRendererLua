@@ -20,7 +20,6 @@ public:
 MovementSystem::MovementSystem() {
   requireComponent<TransformComponent>();
   requireComponent<RigidBodyComponent>();
-  requireComponent<KeyboardControlledComponent>(); // cahnge
 }
 
 void MovementSystem::update(float deltaTime) const {
@@ -29,8 +28,6 @@ void MovementSystem::update(float deltaTime) const {
     auto& rigidBody = entity.getComponent<RigidBodyComponent>();
 
     transform.position += rigidBody.velocity * deltaTime;
-    // rigidBody.velocity = glm::vec2(0.f, 0.f);
-    // Logger::err(std::format("Velocity: {}", glm::to_string(rigidBody.velocity)));
     bool outSideTheMap = false;
     if (transform.position.x < 0 ||
         transform.position.x > static_cast<float>(Game::mapWidth) ||
