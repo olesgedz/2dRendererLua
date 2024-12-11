@@ -53,7 +53,7 @@ jobs:
         if: matrix.os == 'ubuntu-24.04'
         run: |
           sudo apt update &&
-          sudo apt install -y clang ninja-build perl
+          sudo apt install -y clang ninja-build perl autoconf automake libtool pkg-config
       - name: Setup vcpkg
         run: |
           git clone https://github.com/microsoft/vcpkg.git &&
