@@ -29,7 +29,7 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             generator: "Visual Studio 17 2022"
-          - os: ubuntu-24.04  // version of ubuntu is too old
+          - os: ubuntu-24.04  # version of ubuntu is too old
             c_compiler: clang
             cpp_compiler: clang++
             generator: "Ninja"
