@@ -5,10 +5,11 @@ set(Target ENGINE)
 project(${Target})
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_SCAN_FOR_MODULES TRUE)
 
 if (NOT WIN32)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
-    set(CMAKE_CXX_SCAN_FOR_MODULES TRUE)
 endif ()
 
 set(CMAKE_BUILD_TYPE Debug)
