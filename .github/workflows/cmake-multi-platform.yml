@@ -30,8 +30,8 @@ jobs:
             cpp_compiler: cl
             generator: "Visual Studio 17 2022"
           - os: ubuntu-24.04  # version of ubuntu is too old
-            c_compiler: clang
-            cpp_compiler: clang++
+            c_compiler: gcc
+            cpp_compiler: g++
             generator: "Ninja"
         exclude:
           - os: windows-latest
