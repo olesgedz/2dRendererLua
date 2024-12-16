@@ -71,6 +71,23 @@ void MovementSystem::update(float deltaTime) const {
     auto& rigidBody = entity.getComponent<RigidBodyComponent>();
 
     transform.position += rigidBody.velocity * deltaTime;
+
+    if (entity.hasTag("player")) {
+      int paddingLeft = 10;
+      int paddingTop = 10;
+      int paddingRight = 50;
+      int paddingBottom = 100;
+
+      transform.position.x = transform.position.x < paddingLeft ? paddingLeft : transform.position.x;
+      transform.position.x = transform.position.x > Game::mapWidth - paddingRight
+                               ? Game::mapWidth - paddingRight
+                               : transform.position.x;
+      transform.position.y = transform.position.y < paddingTop ? paddingTop : transform.position.y;
+      transform.position.y = transform.position.y > Game::mapHeight - paddingBottom
+                               ? Game::mapHeight - paddingBottom
+                               : transform.position.y;
+    }
+
     bool outSideTheMap = false;
     if (transform.position.x < 0 ||
         transform.position.x > static_cast<float>(Game::mapWidth) ||
