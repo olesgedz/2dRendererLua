@@ -111,6 +111,7 @@ void Game::loadLevel(int level) {
 
   _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
   _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
+  _assetStorage->addTexture("tree-image", _assetsPath / "images/tree.png", _renderer);
 
   // Load TileMap
   _assetStorage->addTexture("jungle-tilemap", _assetsPath / "tilemaps/jungle.png", _renderer);
@@ -185,12 +186,13 @@ void Game::loadLevel(int level) {
   Entity tank = _registry->createEntity();
 
   tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  tank.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
+  tank.addComponent<RigidBodyComponent>(glm::vec2(20.0f, 0.f));
   tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
   tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
   tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 10, false);
   tank.addComponent<HealthComponent>(100);
   tank.group("enemies");
+  tank.tag("tankBotato");
 
   Entity label = _registry->createEntity();
   SDL_Color white = {255, 255, 255};
@@ -210,6 +212,19 @@ void Game::loadLevel(int level) {
   Entity label1 = _registry->createEntity();
   label1.addComponent<TextLabelComponent>(glm::vec2(100, 100), "THIS IS A TEXT LABEL!!! Not Fixed", "charriot-font",
                                           white, false);
+
+  Entity treeA = _registry->createEntity();
+  treeA.addComponent<TransformComponent>(glm::vec2(380.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
+  treeA.addComponent<SpriteComponent>("tree-image", 1, glm::vec2(16.f, 32.f));
+  treeA.addComponent<BoxColliderComponent>(glm::vec2(16.f, 32.f));
+  treeA.group("obstacles");
+  treeA.tag("terererA");
+
+  Entity treeB = _registry->createEntity();
+  treeB.addComponent<TransformComponent>(glm::vec2(400.0f, 50.f), glm::vec2(1.0f, 1.0f), 0.f);
+  treeB.addComponent<SpriteComponent>("tree-image", 1, glm::vec2(16.f, 32.f));
+  treeB.addComponent<BoxColliderComponent>(glm::vec2(16.f, 32.f));
+  treeB.group("obstacles");
 }
 
 void Game::run() {
@@ -266,6 +281,7 @@ void Game::update() {
 
   // Subscriptions
   _registry->getSystem<DamageSystem>().subscribeToEvents(_eventBus);
+  _registry->getSystem<MovementSystem>().subscribeToEvents(_eventBus);
   _registry->getSystem<KeyboardControlSystem>().subscribeToEvents(_eventBus);
   _registry->getSystem<ProjectileEmitSystem>().subscribeToEvents(_eventBus);
 

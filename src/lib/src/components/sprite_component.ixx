@@ -14,6 +14,7 @@ export struct SpriteComponent {
   SDL_Rect srcRect{};
   int zDepth;
   bool isFixed;
+  SDL_RendererFlip flip;
 
   explicit SpriteComponent(std::string assetId = "",
                            int zDepth = 0,
@@ -24,5 +25,6 @@ export struct SpriteComponent {
       )
     : assetId(std::move(assetId)), size(size), color(color), zDepth(zDepth), isFixed(isFixed) {
     srcRect = {static_cast<int>(src.x), static_cast<int>(src.y), static_cast<int>(size.x), static_cast<int>(size.y)};
+    flip = SDL_FLIP_NONE;
   }
 };
