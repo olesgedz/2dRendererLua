@@ -55,7 +55,12 @@ void RenderSystem::update(SDL_Renderer* renderer,
         static_cast<int>(sprite.size.y * transform.scale.y)
     };
 
-    SDL_RenderCopyEx(renderer, assetStorage->getTexture(sprite.assetId),
-                     &srcRect, &dstRect, transform.rotation, nullptr, SDL_FLIP_NONE);
+    SDL_RenderCopyEx(renderer,
+                     assetStorage->getTexture(sprite.assetId),
+                     &srcRect,
+                     &dstRect,
+                     transform.rotation,
+                     nullptr,
+                     sprite.flip);
   }
 }
