@@ -41,6 +41,11 @@ void RenderSystem::update(SDL_Renderer* renderer,
     const auto& transform = entity.getComponent<TransformComponent>();
     const auto& sprite = entity.getComponent<SpriteComponent>();
 
+    if (transform.position.x + sprite.size.x * transform.scale.x < camera.x ||
+        transform.position.x > camera.x + camera.w ||
+        transform.position.y + sprite.size.y * transform.scale.y < camera.y ||
+        transform.position.y > camera.y + camera.h)
+      continue;
     SDL_Rect srcRect = sprite.srcRect;
     glm::vec2 shift = glm::vec2(0);
 
