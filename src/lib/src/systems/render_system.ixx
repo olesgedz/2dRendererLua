@@ -45,28 +45,28 @@ void RenderSystem::update(SDL_Renderer* renderer,
         transform.position.x > camera.x + camera.w ||
         transform.position.y + sprite.size.y * transform.scale.y < camera.y ||
         transform.position.y > camera.y + camera.h &&
-        !sprite.isFixed) {
+        !sprite.isFixed)
       continue;
-      SDL_Rect srcRect = sprite.srcRect;
-      glm::vec2 shift = glm::vec2(0);
+    SDL_Rect srcRect = sprite.srcRect;
+    glm::vec2 shift = glm::vec2(0);
 
-      if (!sprite.isFixed) {
-        shift = glm::vec2(camera.x, camera.y);
-      }
-
-      SDL_Rect dstRect = {
-          static_cast<int>(transform.position.x - shift.x),
-          static_cast<int>(transform.position.y - shift.y),
-          static_cast<int>(sprite.size.x * transform.scale.x),
-          static_cast<int>(sprite.size.y * transform.scale.y)
-      };
-
-      SDL_RenderCopyEx(renderer,
-                       assetStorage->getTexture(sprite.assetId),
-                       &srcRect,
-                       &dstRect,
-                       transform.rotation,
-                       nullptr,
-                       sprite.flip);
+    if (!sprite.isFixed) {
+      shift = glm::vec2(camera.x, camera.y);
     }
+
+    SDL_Rect dstRect = {
+        static_cast<int>(transform.position.x - shift.x),
+        static_cast<int>(transform.position.y - shift.y),
+        static_cast<int>(sprite.size.x * transform.scale.x),
+        static_cast<int>(sprite.size.y * transform.scale.y)
+    };
+
+    SDL_RenderCopyEx(renderer,
+                     assetStorage->getTexture(sprite.assetId),
+                     &srcRect,
+                     &dstRect,
+                     transform.rotation,
+                     nullptr,
+                     sprite.flip);
   }
+}
