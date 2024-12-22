@@ -11,7 +11,4 @@ Completed features:
 - Events
 - Unit tests
 - ImGui integration
-
-Future features:
-
-- Lua Scripting Support 
+- Lua Scripting Support
