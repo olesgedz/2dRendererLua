@@ -31,6 +31,7 @@ void AssetStorage::clearAssets() {
 void AssetStorage::addTexture(const std::string& id, std::filesystem::path path, SDL_Renderer* renderer) {
   SDL_Surface* surface = IMG_Load(path.string().c_str());
   if (!surface) {
+    Logger::err("Failed to load texture: " + path.string());
     throw std::runtime_error("Failed to load texture: " + path.string());
   }
 

@@ -24,7 +24,7 @@ public:
   void update() const {
   }
 
-  void subscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
+  void subscribeToEvents(std::shared_ptr<EventBus> eventBus) {
     eventBus->subscribeToEvent<KeyPressEvent>(this, &KeyboardControlSystem::onKeyPress);
   }
 

@@ -29,7 +29,6 @@ public:
   ~Game();
 
   void initialize();
-  void loadLevel(int level);
   void run();
   void processInput();
   void setup();
@@ -41,9 +40,9 @@ public:
   static int mapHeight;
 
 private:
-  std::unique_ptr<Registry> _registry;
-  std::unique_ptr<AssetStorage> _assetStorage;
-  std::unique_ptr<EventBus> _eventBus;
+  std::shared_ptr<Registry> _registry;
+  std::shared_ptr<AssetStorage> _assetStorage;
+  std::shared_ptr<EventBus> _eventBus;
 
   float _millisecondsPreviousFrame = 0.0f;
   float _deltaTime = 0.0f;

@@ -21,6 +21,7 @@ import components;
 import systems;
 import events;
 import settings;
+import level_loader;
 
 int Game::mapWidth = 0;
 int Game::mapHeight = 0;
@@ -29,9 +30,9 @@ Game::Game() {
   _isRunning = false;
   _isDebug = false;
 
-  _registry = std::make_unique<Registry>();
-  _assetStorage = std::make_unique<AssetStorage>();
-  _eventBus = std::make_unique<EventBus>();
+  _registry = std::make_shared<Registry>();
+  _assetStorage = std::make_shared<AssetStorage>();
+  _eventBus = std::make_shared<EventBus>();
 
   Logger::log("Game constructor called!");
 }
@@ -92,9 +93,7 @@ void Game::initialize() {
   _isRunning = true;
 }
 
-void Game::setup() {}
-
-void Game::loadLevel(int level) {
+void Game::setup() {
   _registry->addSystem<MovementSystem>();
   _registry->addSystem<RenderSystem>();
   _registry->addSystem<AnimationSystem>();
@@ -109,122 +108,13 @@ void Game::loadLevel(int level) {
   _registry->addSystem<HealthBarRenderSystem>();
   _registry->addSystem<RenderGUISystem>();
 
-  _assetStorage->addTexture("tank-image", _assetsPath / "images/tank-panther-right.png", _renderer);
-  _assetStorage->addTexture("truck-image", _assetsPath / "images/truck-ford-right.png", _renderer);
-  _assetStorage->addTexture("tree-image", _assetsPath / "images/tree.png", _renderer);
-
-  // Load TileMap
-  _assetStorage->addTexture("jungle-tilemap", _assetsPath / "tilemaps/jungle.png", _renderer);
-  _assetStorage->addTexture("chopper-spritesheet", _assetsPath / "images/chopper-spritesheet.png", _renderer);
-  _assetStorage->addTexture("radar-spritesheet", _assetsPath / "images/radar.png", _renderer);
-  _assetStorage->addTexture("bullet-image", _assetsPath / "images/bullet.png", _renderer);
-  _assetStorage->addFont("charriot-font", _assetsPath / "fonts/charriot.ttf", 16);
-  _assetStorage->addFont("pico8-font-5", _assetsPath / "fonts/pico8.ttf", 5);
-  _assetStorage->addFont("pico8-font-10", _assetsPath / "fonts/pico8.ttf", 10);
-
-  // Load the tilemap
-  int tileSize = 32;
-  double tileScale = 2.0;
-  int mapNumCols = 25;
-  int mapNumRows = 20;
-
-  mapWidth = mapNumCols * tileSize * tileScale;
-  mapHeight = mapNumRows * tileSize * tileScale;
-
-  std::fstream mapFile;
-  mapFile.open(_assetsPath / "tilemaps/jungle.map");
-  if (!mapFile) {
-    Logger::err("Failed to open map file");
-    return;
-  }
-
-  for (int y = 0; y < mapNumRows; y++) {
-    for (int x = 0; x < mapNumCols; x++) {
-      char ch;
-      mapFile.get(ch);
-      int srcRectY = std::atoi(&ch) * tileSize;
-      mapFile.get(ch);
-      int srcRectX = std::atoi(&ch) * tileSize;
-      mapFile.ignore();
-
-      Entity tile = _registry->createEntity();
-      tile.addComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)),
-                                            glm::vec2(tileScale, tileScale), 0.0);
-      tile.addComponent<SpriteComponent>("jungle-tilemap", 0, glm::vec2(tileSize, tileSize), glm::vec4(0), false,
-                                         glm::vec2(srcRectX, srcRectY));
-      tile.group("tiles");
-    }
-  }
-
-  mapFile.close();
-
-  Settings::mapSize = glm::vec2(mapNumCols * tileSize * tileScale, mapNumRows * tileSize * tileScale);
-
-  // UI
-  Entity radar = _registry->createEntity();
-  radar.addComponent<TransformComponent>(glm::vec2(Settings::windowWidth - 74.f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  radar.addComponent<SpriteComponent>("radar-spritesheet", 5, glm::vec2(64.f, 64.f), glm::vec4(0), true);
-  radar.addComponent<AnimationComponent>(8, 5, true);
-
-  // Entities
-  Entity chopper = _registry->createEntity();
-
-  float speed = 80.f;
-  chopper.addComponent<TransformComponent>(glm::vec2(100.0f, 100.f), glm::vec2(1.0f, 1.0f), 0.f);
-  chopper.addComponent<RigidBodyComponent>(glm::vec2(0.f, 0.f));
-  chopper.addComponent<SpriteComponent>("chopper-spritesheet", 1, glm::vec2(32.f, 32.f));
-  chopper.addComponent<AnimationComponent>(2, 15, true);
-  chopper.addComponent<KeyboardControlledComponent>(glm::vec2(0, -speed), glm::vec2(speed, 0), glm::vec2(0, speed),
-                                                    glm::vec2(-speed, 0));
-  chopper.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  chopper.addComponent<CameraFollowComponent>();
-  chopper.addComponent<HealthComponent>(100);
-  chopper.addComponent<ProjectileEmitterComponent>(glm::vec2(150.f, 150.f), 0, 1000, 10, true);
-
-  chopper.tag("player");
-
-  Entity tank = _registry->createEntity();
-
-  tank.addComponent<TransformComponent>(glm::vec2(300.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  tank.addComponent<RigidBodyComponent>(glm::vec2(20.0f, 0.f));
-  tank.addComponent<SpriteComponent>("tank-image", 1, glm::vec2(32.f, 32.f));
-  tank.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  tank.addComponent<ProjectileEmitterComponent>(glm::vec2(100.f, 0.f), 5000, 1000, 10, false);
-  tank.addComponent<HealthComponent>(100);
-  tank.group("enemies");
-  tank.tag("tankBotato");
-
-  Entity label = _registry->createEntity();
-  SDL_Color white = {255, 255, 255};
-  label.addComponent<TextLabelComponent>(glm::vec2(300, 200), "THIS IS A TEXT LABEL!!! Fixed", "charriot-font", white,
-                                         true);
-
-  Entity truck = _registry->createEntity();
-
-  truck.addComponent<TransformComponent>(glm::vec2(10.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  truck.addComponent<RigidBodyComponent>(glm::vec2(0.0f, 0.f));
-  truck.addComponent<SpriteComponent>("truck-image", 1, glm::vec2(32.f, 32.f));
-  truck.addComponent<BoxColliderComponent>(glm::vec2(32.f, 32.f));
-  truck.addComponent<ProjectileEmitterComponent>(glm::vec2(0.f, 100.f), 1000, 1000, 10, false);
-  truck.addComponent<HealthComponent>(100);
-  truck.group("enemies");
-
-  Entity label1 = _registry->createEntity();
-  label1.addComponent<TextLabelComponent>(glm::vec2(100, 100), "THIS IS A TEXT LABEL!!! Not Fixed", "charriot-font",
-                                          white, false);
-
-  Entity treeA = _registry->createEntity();
-  treeA.addComponent<TransformComponent>(glm::vec2(380.0f, 10.f), glm::vec2(1.0f, 1.0f), 0.f);
-  treeA.addComponent<SpriteComponent>("tree-image", 1, glm::vec2(16.f, 32.f));
-  treeA.addComponent<BoxColliderComponent>(glm::vec2(16.f, 32.f));
-  treeA.group("obstacles");
-  treeA.tag("terererA");
-
-  Entity treeB = _registry->createEntity();
-  treeB.addComponent<TransformComponent>(glm::vec2(400.0f, 50.f), glm::vec2(1.0f, 1.0f), 0.f);
-  treeB.addComponent<SpriteComponent>("tree-image", 1, glm::vec2(16.f, 32.f));
-  treeB.addComponent<BoxColliderComponent>(glm::vec2(16.f, 32.f));
-  treeB.group("obstacles");
+  LevelLoader loader;
+  Resources resources;
+  resources.assetStorage = _assetStorage;
+  resources.registry = _registry;
+  resources.renderer = _renderer;
+  resources.assetsPath = _assetsPath;
+  loader.loadLevel(resources, 1);
 }
 
 void Game::run() {

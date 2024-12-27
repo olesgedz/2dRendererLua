@@ -12,4 +12,4 @@ function factorial(n)
     return n * factorial(n - 1)
 end
 
-print("C++ function call result: " .. cpp_function(3))
+result_test = cpp_function(3)

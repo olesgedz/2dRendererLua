@@ -17,7 +17,7 @@ import asset_storage;
 export class RenderSystem : public System {
 public:
   RenderSystem();
-  void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
+  void update(SDL_Renderer* renderer, const std::shared_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
 };
 
 RenderSystem::RenderSystem() {
@@ -26,7 +26,7 @@ RenderSystem::RenderSystem() {
 }
 
 void RenderSystem::update(SDL_Renderer* renderer,
-                          const std::unique_ptr<AssetStorage>& assetStorage,
+                          const std::shared_ptr<AssetStorage>& assetStorage,
                           const SDL_Rect& camera) const {
   // It returns a vector of entities that have the required components, so
   // only drawable entities.

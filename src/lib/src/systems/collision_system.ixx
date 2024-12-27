@@ -24,7 +24,7 @@ public:
     TransformComponent transform;
   };
 
-  void update(std::unique_ptr<EventBus>& eventBus) {
+  void update(std::shared_ptr<EventBus> eventBus) {
     auto entities = getSystemEntities();
 
     // interested in

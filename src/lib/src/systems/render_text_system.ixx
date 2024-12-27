@@ -18,12 +18,12 @@ import asset_storage;
 export class RenderTextSystem : public System {
 public:
   RenderTextSystem();
-  void update(SDL_Renderer* renderer, const std::unique_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
+  void update(SDL_Renderer* renderer, const std::shared_ptr<AssetStorage>& assetStorage, const SDL_Rect& camera) const;
 };
 
 
 void RenderTextSystem::update(SDL_Renderer* renderer,
-                              const std::unique_ptr<AssetStorage>& assetStorage,
+                              const std::shared_ptr<AssetStorage>& assetStorage,
                               const SDL_Rect& camera) const {
   for (auto& entity : getSystemEntities()) {
     const auto& textLabel = entity.getComponent<TextLabelComponent>();

@@ -19,14 +19,14 @@ import asset_storage;
 export class RenderGUISystem : public System {
 public:
   RenderGUISystem() = default;
-  void update(SDL_Renderer* renderer, ImGuiIO& io, const std::unique_ptr<Registry>& registry) const;
+  void update(SDL_Renderer* renderer, ImGuiIO& io, const std::shared_ptr<Registry>& registry) const;
 
 private:
   std::shared_ptr<AssetStorage> _assetStorage;
 };
 
 
-void RenderGUISystem::update(SDL_Renderer* renderer, ImGuiIO& io, const std::unique_ptr<Registry>& registry) const {
+void RenderGUISystem::update(SDL_Renderer* renderer, ImGuiIO& io, const std::shared_ptr<Registry>& registry) const {
   ImGui_ImplSDLRenderer2_NewFrame();
   ImGui_ImplSDL2_NewFrame();
   ImGui::NewFrame();

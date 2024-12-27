@@ -18,15 +18,15 @@ TEST(Lua, SimpleTest) {
   EXPECT_EQ(result, 120);
 }
 
-int cppFunction() {
-  std::cout << "Hello from C++!" << std::endl;
-  return 42;
-}
+int cppFunction() { return 42; }
 
 TEST(Lua, CPPFunction) {
   sol::state lua;
-
-  lua["cppFunction"] = cppFunction;
   lua.open_libraries(sol::lib::base);
+
+  lua["cpp_function"] = cppFunction;
   lua.script_file("../assets/scripts/simple_test.lua");
+
+  int result = lua["cpp_function"]();
+  EXPECT_EQ(result, 42);
 }

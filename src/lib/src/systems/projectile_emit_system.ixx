@@ -17,8 +17,8 @@ import events;
 export class ProjectileEmitSystem : public System {
 public:
   ProjectileEmitSystem();
-  void update(std::unique_ptr<Registry>& registry) const;
-  void subscribeToEvents(std::unique_ptr<EventBus>& eventBus);
+  void update(std::shared_ptr<Registry> registry) const;
+  void subscribeToEvents(std::shared_ptr<EventBus> eventBus);
   void onKeyPress(KeyPressEvent& event);
   void shoot();
 };
@@ -28,7 +28,7 @@ ProjectileEmitSystem::ProjectileEmitSystem() {
   requireComponent<TransformComponent>();
 }
 
-void ProjectileEmitSystem::update(std::unique_ptr<Registry>& registry) const {
+void ProjectileEmitSystem::update(std::shared_ptr<Registry> registry) const {
   for (auto entity : getSystemEntities()) {
     auto& projectileEmitter = entity.getComponent<ProjectileEmitterComponent>();
     const auto transform = entity.getComponent<TransformComponent>();
@@ -64,7 +64,7 @@ void ProjectileEmitSystem::update(std::unique_ptr<Registry>& registry) const {
   }
 }
 
-void ProjectileEmitSystem::subscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
+void ProjectileEmitSystem::subscribeToEvents(std::shared_ptr<EventBus> eventBus) {
   eventBus->subscribeToEvent<KeyPressEvent>(this, &ProjectileEmitSystem::onKeyPress);
 }
 

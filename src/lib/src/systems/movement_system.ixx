@@ -19,7 +19,7 @@ public:
   MovementSystem();
   void update(float deltaTime) const;
 
-  void subscribeToEvents(const std::unique_ptr<EventBus>& eventBus);
+  void subscribeToEvents(const std::shared_ptr<EventBus> eventBus);
   void onCollision(CollisionEvent& event);
 
 private:
@@ -31,7 +31,7 @@ MovementSystem::MovementSystem() {
   requireComponent<RigidBodyComponent>();
 }
 
-void MovementSystem::subscribeToEvents(const std::unique_ptr<EventBus>& eventBus) {
+void MovementSystem::subscribeToEvents(const std::shared_ptr<EventBus> eventBus) {
   eventBus->subscribeToEvent<CollisionEvent>(this, &MovementSystem::onCollision);
 }
 
