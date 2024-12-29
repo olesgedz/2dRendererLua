@@ -1,16 +1,9 @@
 module;
 #include <imgui.h>
-#include <imgui_impl_sdl2.h>
-#include <imgui_impl_sdlrenderer2.h>
 #include <SDL2/SDL.h>
-#include <SDL_image.h>
-#include <SDL_ttf.h>
 #include <SDL_video.h>
-
-
 #include <filesystem>
-#include <fstream>
-#include <glm/glm.hpp>
+#include <sol/sol.hpp>
 
 export module game;
 
@@ -19,7 +12,6 @@ import ecs;
 import asset_storage;
 import event_bus;
 import components;
-// import systems;
 import events;
 import settings;
 
@@ -50,6 +42,8 @@ private:
   SDL_Window* _window;
   SDL_Renderer* _renderer;
   SDL_Rect _camera;
+
+  std::shared_ptr<sol::state> _lua;
 
   bool _isRunning;
   bool _isDebug;

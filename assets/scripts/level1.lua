@@ -4,19 +4,19 @@ Level = {
     -- Table to define the list of assets
     ----------------------------------------------------
     assets = {
-        [0] = { type = "texture", id = "tilemap-texture", file = "tilemaps/jungle.png" },
-        { type = "texture", id = "chopper-texture", file = "images/chopper-green-spritesheet.png" },
-        { type = "texture", id = "tank-texture", file = "images/tank-tiger-up.png" },
-        { type = "texture", id = "bullet-texture", file = "images/bullet.png" },
-        { type = "font", id = "pico8-font-5", file = "fonts/pico8.ttf", font_size = 5 },
-        { type = "font", id = "pico8-font-10", file = "fonts/pico8.ttf", font_size = 10 }
+        [0] = { type = "texture", id = "tilemap-texture", path = "tilemaps/jungle.png" },
+        { type = "texture", id = "chopper-texture", path = "images/chopper-green-spritesheet.png" },
+        { type = "texture", id = "tank-texture", path = "images/tank-tiger-up.png" },
+        { type = "texture", id = "bullet-texture", path = "images/bullet.png" },
+        { type = "font", id = "pico8-font-5", path = "fonts/pico8.ttf", font_size = 5 },
+        { type = "font", id = "pico8-font-10", path = "fonts/pico8.ttf", font_size = 10 }
     },
 
     ----------------------------------------------------
     -- table to define the map config variables
     ----------------------------------------------------
     tilemap = {
-        map_file = "tilemaps/jungle.map",
+        path = "tilemaps/jungle.map",
         texture_asset_id = "tilemap-texture",
         num_rows = 20,
         num_cols = 25,
@@ -44,7 +44,7 @@ Level = {
                     texture_asset_id = "chopper-texture",
                     width = 32,
                     height = 32,
-                    z_index = 4,
+                    z_index = 20,
                     fixed = false,
                     src_rect_x = 0,
                     src_rect_y = 0

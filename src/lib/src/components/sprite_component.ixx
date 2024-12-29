@@ -19,7 +19,7 @@ export struct SpriteComponent {
   explicit SpriteComponent(std::string assetId = "",
                            int zDepth = 0,
                            glm::vec2 size = glm::vec2(0.f, 0.f),
-                           glm::vec4 color = glm::vec4(255.f, 255.f, 255.f, 255.f),
+                           // glm::vec4 color = glm::vec4(255.f, 255.f, 255.f, 255.f),
                            bool isFixed = false,
                            glm::vec2 src = glm::vec2(0.f, 0.f)
       )

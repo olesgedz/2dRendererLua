@@ -50,7 +50,10 @@ void AssetStorage::addTexture(const std::string& id, std::filesystem::path path,
 }
 
 SDL_Texture* AssetStorage::getTexture(const std::string& id) const {
-  assert(_textures.contains(id) && "Texture not found in assetStorage");
+  if (!_textures.contains(id)) {
+    throw std::runtime_error("Texture not with " + id + " found in assetStorage");
+  }
+  // assert(_textures.contains(id) && "Texture not found in assetStorage");
   return _textures.at(id);
 }
 

@@ -17,8 +17,8 @@ import game;
 class DamageSystemTest : public ::testing::Test {
  public:
   void SetUp() override {
-    registry = std::make_unique<Registry>();
-    eventBus = std::make_unique<EventBus>();
+    registry = std::make_shared<Registry>();
+    eventBus = std::make_shared<EventBus>();
     std::cout << "Setup" << std::endl;
   }
 
@@ -27,8 +27,8 @@ class DamageSystemTest : public ::testing::Test {
     std::cout << "TearDown" << std::endl;
   }
 
-  std::unique_ptr<Registry> registry;
-  std::unique_ptr<EventBus> eventBus;
+  std::shared_ptr<Registry> registry;
+  std::shared_ptr<EventBus> eventBus;
 };
 
 TEST_F(DamageSystemTest, AddComponent) {

@@ -51,7 +51,7 @@ void ProjectileEmitSystem::update(std::shared_ptr<Registry> registry) const {
       Entity projectile = registry->createEntity();
       projectile.addComponent<TransformComponent>(projectilePosition, glm::vec2(1.0, 1.0), 0.0);
       projectile.addComponent<RigidBodyComponent>(projectileEmitter.projectileVelocity);
-      projectile.addComponent<SpriteComponent>("bullet-image", 4, glm::vec2(4, 4));
+      projectile.addComponent<SpriteComponent>("bullet-texture", 4, glm::vec2(4, 4));
       // projectile.addComponent<BoxColliderComponent>(4, 4);
       projectile.addComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage,
                                                    projectileEmitter.projectileDuration);
@@ -107,7 +107,7 @@ void ProjectileEmitSystem::shoot() {
       Entity projectile = entity.registry->createEntity();
       projectile.addComponent<TransformComponent>(projectilePosition, transform.scale, transform.rotation);
       projectile.addComponent<RigidBodyComponent>(projectileVelocity);
-      projectile.addComponent<SpriteComponent>("bullet-image", 4, glm::vec2(4, 4));
+      projectile.addComponent<SpriteComponent>("bullet-texture", 4, glm::vec2(4, 4));
       projectile.addComponent<ProjectileComponent>(projectileEmitter.isFriendly, projectileEmitter.hitPercentDamage,
                                                    10000);
       projectile.addComponent<BoxColliderComponent>(glm::vec2(4.f, 4.f));

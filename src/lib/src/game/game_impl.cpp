@@ -10,6 +10,7 @@ module;
 #include <filesystem>
 #include <fstream>
 #include <glm/glm.hpp>
+#include <sol/sol.hpp>
 
 module game;
 
@@ -108,12 +109,18 @@ void Game::setup() {
   _registry->addSystem<HealthBarRenderSystem>();
   _registry->addSystem<RenderGUISystem>();
 
+  _lua = std::make_shared<sol::state>();
+  _lua->open_libraries(sol::lib::base, sol::lib::math);
+
   LevelLoader loader;
   Resources resources;
+
   resources.assetStorage = _assetStorage;
   resources.registry = _registry;
   resources.renderer = _renderer;
   resources.assetsPath = _assetsPath;
+  resources.lua = _lua;
+
   loader.loadLevel(resources, 1);
 }
 

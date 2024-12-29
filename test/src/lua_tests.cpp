@@ -30,3 +30,13 @@ TEST(Lua, CPPFunction) {
   int result = lua["cpp_function"]();
   EXPECT_EQ(result, 42);
 }
+
+void setData(const std::shared_ptr<sol::state>& lua) { (*lua)["cppVar"] = -42; }
+
+TEST(Lua, Reference) {
+  std::shared_ptr<sol::state> lua = std::make_shared<sol::state>();
+  lua->open_libraries(sol::lib::base);
+  setData(lua);
+  lua->script_file("../assets/scripts/reference_test.lua");
+  EXPECT_EQ((*lua)["cppVar"], -42);
+}
