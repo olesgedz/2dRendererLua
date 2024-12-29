@@ -13,3 +13,4 @@ export import projectile_emitter_component;
 export import health_component;
 export import projectile_component;
 export import text_label_component;
+export import script_component;

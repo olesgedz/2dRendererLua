@@ -13,3 +13,4 @@ export import :projectile_lifecycle_system;
 export import :render_text_system;
 export import :health_bar_render_system;
 export import :render_gui_system;
+export import :script_system;

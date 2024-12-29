@@ -8,7 +8,7 @@ TEST(Lua, SimpleTest) {
 
   lua.open_libraries(sol::lib::base);
 
-  lua.script_file("../assets/scripts/simple_test.lua");
+  lua.script_file("../assets/scripts/tests/simple_test.lua");
 
   int testVariable = lua["test_variable"];
   EXPECT_EQ(testVariable, 42);
@@ -25,7 +25,7 @@ TEST(Lua, CPPFunction) {
   lua.open_libraries(sol::lib::base);
 
   lua["cpp_function"] = cppFunction;
-  lua.script_file("../assets/scripts/cpp_call.lua");
+  lua.script_file("../assets/scripts/tests/cpp_call_test.lua");
 
   int result1 = lua["cpp_function"]();
   int result2 = lua["result_test"];
@@ -39,6 +39,6 @@ TEST(Lua, Reference) {
   std::shared_ptr<sol::state> lua = std::make_shared<sol::state>();
   lua->open_libraries(sol::lib::base);
   setData(lua);
-  lua->script_file("../assets/scripts/reference_test.lua");
+  lua->script_file("../assets/scripts/tests/reference_test.lua");
   EXPECT_EQ((*lua)["cppVar"], -42);
 }

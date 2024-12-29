@@ -229,6 +229,13 @@ void LevelLoader::loadLevel(const Resources& resources, int levelNumber) {
                       entity["components"]["keyboard_controller"]["left_velocity"]["y"]));
       }
     }
+
+    // Script Component
+    sol::optional<sol::table> script = entity["components"]["on_update_script"];
+    if (script != sol::nullopt) {
+      sol::function func = script.value()[0];
+      newEntity.addComponent<ScriptComponent>(func);
+    }
     i++;
   }
 }

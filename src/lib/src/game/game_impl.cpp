@@ -108,6 +108,7 @@ void Game::setup() {
   _registry->addSystem<RenderTextSystem>();
   _registry->addSystem<HealthBarRenderSystem>();
   _registry->addSystem<RenderGUISystem>();
+  _registry->addSystem<ScriptSystem>();
 
   _lua = std::make_shared<sol::state>();
   _lua->open_libraries(sol::lib::base, sol::lib::math);
@@ -193,6 +194,7 @@ void Game::update() {
   _registry->getSystem<CameraMovementSystem>().update(_camera);
   _registry->getSystem<ProjectileEmitSystem>().update(_registry);
   _registry->getSystem<ProjectileLifecycleSystem>().update();
+  _registry->getSystem<ScriptSystem>().update();
 }
 
 void Game::render() {
