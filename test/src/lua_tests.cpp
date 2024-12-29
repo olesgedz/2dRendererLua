@@ -25,10 +25,12 @@ TEST(Lua, CPPFunction) {
   lua.open_libraries(sol::lib::base);
 
   lua["cpp_function"] = cppFunction;
-  lua.script_file("../assets/scripts/simple_test.lua");
+  lua.script_file("../assets/scripts/cpp_call.lua");
 
-  int result = lua["cpp_function"]();
-  EXPECT_EQ(result, 42);
+  int result1 = lua["cpp_function"]();
+  int result2 = lua["result_test"];
+  EXPECT_EQ(result1, result2);
+  EXPECT_EQ(result1, 42);
 }
 
 void setData(const std::shared_ptr<sol::state>& lua) { (*lua)["cppVar"] = -42; }

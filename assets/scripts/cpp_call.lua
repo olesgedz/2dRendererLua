@@ -1,0 +1,1 @@
+result_test = cpp_function(3)

@@ -110,6 +110,7 @@ void LevelLoader::loadLevel(const Resources& resources, int levelNumber) {
 
   Game::mapHeight = mapNumRows * tileSize * mapScale;
   Game::mapWidth = mapNumCols * tileSize * mapScale;
+  Settings::mapSize = glm::vec2(Game::mapWidth, Game::mapHeight);
 
   // Reading the entities
   sol::table entities = level["entities"];

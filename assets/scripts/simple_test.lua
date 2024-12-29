@@ -11,5 +11,3 @@ function factorial(n)
     end
     return n * factorial(n - 1)
 end
-
-result_test = cpp_function(3)
