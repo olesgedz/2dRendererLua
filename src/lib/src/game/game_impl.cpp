@@ -113,6 +113,8 @@ void Game::setup() {
   _lua = std::make_shared<sol::state>();
   _lua->open_libraries(sol::lib::base, sol::lib::math);
 
+  _registry->getSystem<ScriptSystem>().createLuaBindings(*_lua);
+
   LevelLoader loader;
   Resources resources;
 
@@ -194,7 +196,7 @@ void Game::update() {
   _registry->getSystem<CameraMovementSystem>().update(_camera);
   _registry->getSystem<ProjectileEmitSystem>().update(_registry);
   _registry->getSystem<ProjectileLifecycleSystem>().update();
-  _registry->getSystem<ScriptSystem>().update();
+  _registry->getSystem<ScriptSystem>().update(_deltaTime, SDL_GetTicks());
 }
 
 void Game::render() {
