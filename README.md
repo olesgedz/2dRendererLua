@@ -24,6 +24,8 @@ Future features:
 
 ## How to build
 
+``vcpkg install .``
+
 ``mkdir build && cd build``
 
 ``cmake ..``
