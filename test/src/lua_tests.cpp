@@ -20,7 +20,7 @@ TEST(Lua, SimpleTest) {
 
 int cppFunction() { return 42; }
 
-TEST(Lua, CPPFunction) {
+TEST(Lua, CPPFunctionCalledInLua) {
   sol::state lua;
   lua.open_libraries(sol::lib::base);
 
@@ -41,4 +41,21 @@ TEST(Lua, Reference) {
   setData(lua);
   lua->script_file("../assets/scripts/tests/reference_test.lua");
   EXPECT_EQ((*lua)["cppVar"], -42);
+}
+
+TEST(Lua, LuaFunctuinCalledInCPP) {
+  std::shared_ptr<sol::state> lua = std::make_shared<sol::state>();
+  lua->open_libraries(sol::lib::base);
+  lua->script_file("../assets/scripts/tests/reference_test.lua");
+
+  sol::function init = (*lua)["init"];
+  sol::function update = (*lua)["update"];
+
+  EXPECT_EQ(init.valid(), true);
+  EXPECT_EQ(update.valid(), true);
+
+  init();
+  for (int i = 0; i < 3; i++) {
+    update(i);
+  }
 }

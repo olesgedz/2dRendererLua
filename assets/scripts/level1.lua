@@ -1,3 +1,11 @@
+function init()
+    print("Level 1 init!")
+end
+
+function update()
+    print("Level 1 update!")
+end
+
 -- Define a table with the start values of the first level
 Level = {
     ----------------------------------------------------

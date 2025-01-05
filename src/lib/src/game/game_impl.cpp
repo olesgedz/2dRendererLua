@@ -124,7 +124,8 @@ void Game::setup() {
   resources.assetsPath = _assetsPath;
   resources.lua = _lua;
 
-  loader.loadLevel(resources, 1);
+  loader.loadLevel(resources, 3);
+  _registry->getSystem<ScriptSystem>().init(*_lua);
 }
 
 void Game::run() {

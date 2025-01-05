@@ -109,11 +109,42 @@ public:
     lua.set_function("set_animation_frame", &SetEntityAnimationFrame);
   }
 
+  void init(sol::state& lua) {
+    sol::function scriptInit = lua["init"];
+    if (scriptInit.valid()) {
+      _initLua = scriptInit;
+      Logger::log("init function found in Lua", Logger::LogColor::CYAN);
+    } else {
+      Logger::err("init function not found in Lua");
+    }
+
+    sol::function scriptUpdate = lua["update"];
+    if (scriptUpdate.valid()) {
+      _updateLua = scriptUpdate;
+      Logger::log("update function found in Lua", Logger::LogColor::CYAN);
+    } else {
+      Logger::err("update function not found in Lua");
+    }
+
+    if (_initLua != sol::nil) {
+      _initLua();
+    }
+  }
+
+
   void update(float deltaTime, int elapsedTime) {
+    if (_updateLua != sol::nil) {
+      _updateLua();
+    }
+
     for (auto& entity : getSystemEntities()) {
       const auto scriptComponent = entity.getComponent<ScriptComponent>();
 
       scriptComponent.func(entity, deltaTime, elapsedTime);
     }
   }
+
+private:
+  sol::function _initLua;
+  sol::function _updateLua;
 };
